@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace DBL
 {
-    public class PlayerDB : BaseDB<Player>
+    public abstract class PlayerDB : BaseDB<Player>
     {
-
+        
     }
 }
