@@ -34,6 +34,9 @@ namespace DBL
             return "player";
         }
 
-        public async Insert
+        public async Task<List<Player>> GetAllAsync()
+        {
+            return ((List<Player>)await SelectAllAsync());
+        }
     }
 }
