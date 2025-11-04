@@ -38,5 +38,30 @@ namespace DBL
         {
             return ((List<Player>)await SelectAllAsync());
         }
+
+        public async Task<Player> InsertAsync(Player player, String Password)
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>
+            {
+                { "UserName", player.UserName },
+                { "Password", Password },
+                { "Email", player.Email },
+                { "Profile Picture", player.ProfilePicture }
+            };
+            return (Player)await base.InsertGetObjAsync(fillValues);
+
+        }
+        public async Task<int> UpdateAsync(Player player)
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>();
+            Dictionary<string, object> filterValues = new Dictionary<string, object>();
+            fillValues.Add("UserName", player.UserName);
+            fillValues.Add("Email", player.Email);
+            filterValues.Add("PlayerID", player.PlayerID.ToString());
+            return await base.UpdateAsync(fillValues, filterValues);
+        }
+
+
+
     }
 }

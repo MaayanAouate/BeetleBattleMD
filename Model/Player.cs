@@ -12,7 +12,7 @@ namespace Model
         
         public int PlayerID { get; set; }
         public string UserName { get; set; }
-        public string Password { get; set; }
+       
         public string Email { get; set; }
         public int IsAdmin { get; set; } // ערך 0 למשתמש וכל ערך אחר לאדמין
         public byte[] ProfilePicture { get; set; }
@@ -20,11 +20,10 @@ namespace Model
         
         public Player() { }
         
-        public Player(int playerID, string userName, string password, string email, int isAdmin, byte[] profilePicture, int tokens)
+        public Player(int playerID, string userName, string email, int isAdmin, byte[] profilePicture, int tokens)
         {
             PlayerID = playerID;
             UserName = userName;
-            Password = password;
             Email = email;
             IsAdmin = isAdmin;
             ProfilePicture = profilePicture;
