@@ -19,7 +19,11 @@ namespace DBL
             bob.Email = row[3].ToString();
             bob.IsAdmin = int.Parse(row[6].ToString());
             bob.Tokens = int.Parse(row[5].ToString());
-            bob.ProfilePicture = (byte[])row[4];
+            try
+            {
+                bob.ProfilePicture = (byte[])row[4];
+            }
+            catch { }
             return bob;
         }
 
@@ -45,9 +49,10 @@ namespace DBL
             {
                 { "UserName", player.UserName },
                 { "Password", Password },
-                { "Email", player.Email },
-                { "Profile Picture", player.ProfilePicture }
+                { "Email", player.Email }              
             };
+            if (player.ProfilePicture != null)
+                fillValues.Add("Profile Picture", player.ProfilePicture);
             return (Player)await base.InsertGetObjAsync(fillValues);
 
         }

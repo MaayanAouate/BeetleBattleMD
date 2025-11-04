@@ -27,7 +27,8 @@ namespace ConsoleUnitTest
             //הכל יעבוד לך!!:)
             //Test Insert new customer Async
             Player player = new Player(2, "khdodhanasich", "khdodi@gmail.com", 1, null, 6700);
-            await db.InsertAsync(player, "emashelimalca");
+            player = await db.InsertAsync(player, "emashelimalca");
+            Console.WriteLine("Josh");
             //await Console.Out.WriteLineAsync($"id: {player.PlayerID} name: {player.UserName} email: {player.Email}\n\n");
             
             
