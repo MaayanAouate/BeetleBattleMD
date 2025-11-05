@@ -56,7 +56,7 @@ namespace DBL
             return (Player)await base.InsertGetObjAsync(fillValues);
 
         }
-        public async Task<int> UpdateAsync(Player player)
+        public async Task<int> UpdateAsync(Player player)// אפדייט לנתונים
         {
             Dictionary<string, object> fillValues = new Dictionary<string, object>();
             Dictionary<string, object> filterValues = new Dictionary<string, object>();
@@ -66,6 +66,27 @@ namespace DBL
             return await base.UpdateAsync(fillValues, filterValues);
         }
 
+        public async Task<int> updateImageAsync(int PlayerID, byte[] ProfilePhoto)
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>();
+            Dictionary<string, object> filterValues = new Dictionary<string, object>();
+            fillValues.Add("ProfilePhoto", ProfilePhoto.ToString());
+            filterValues.Add("PlayerID", PlayerID.ToString());
+            return await base.UpdateAsync(fillValues, filterValues);
+        }
+
+
+        // צריך להוסיף אפדייט לסיסמה+תמונה+טוקנים
+
+
+        public async Task<int> DeleteAsync(Player player) // מחיקת משתמש לפי הID שלו
+        {
+            Dictionary<string, object> filterValues = new Dictionary<string, object>
+            {
+                { "PlayerID", player.PlayerID.ToString() }
+            };
+            return await base.DeleteAsync(filterValues);
+        }
 
 
     }
