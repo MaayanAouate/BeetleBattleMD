@@ -29,7 +29,16 @@ namespace Model
             ProfilePicture = profilePicture;
             Tokens = tokens;
         }
-            //עם סיסמה
+            // בלי סיסמה+ בלי תז
+        public Player(string userName, string email, int isAdmin, byte[] profilePicture, int tokens)
+        {
+            UserName = userName;
+            Email = email;
+            IsAdmin = isAdmin;
+            ProfilePicture = profilePicture;
+            Tokens = tokens;
+        }
+        //עם סיסמה
         public Player(int playerID, string userName, string password, string email, int isAdmin, byte[] profilePicture, int tokens)
         {
             PlayerID = playerID;
@@ -40,5 +49,16 @@ namespace Model
             ProfilePicture = profilePicture;
             Tokens = tokens;
         }
+            //עם סיסמה+ בלי תז
+        public Player(string userName, string password, string email, int isAdmin, byte[] profilePicture, int tokens)
+        {
+            UserName = userName;
+            Password = password;
+            Email = email;
+            IsAdmin = isAdmin;
+            ProfilePicture = profilePicture;
+            Tokens = tokens;
+        }
+
     }
 }
