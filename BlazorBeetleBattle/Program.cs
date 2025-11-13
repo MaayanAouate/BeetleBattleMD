@@ -1,6 +1,6 @@
-using BlazorBeetle.Components;
+using BlazorBeetleBattle.Components;
 
-namespace BlazorBeetle
+namespace BlazorBeetleBattle
 {
     public class Program
     {

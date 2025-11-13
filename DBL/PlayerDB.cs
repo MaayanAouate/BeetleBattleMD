@@ -84,9 +84,14 @@ namespace DBL
             return await base.UpdateAsync(fillValues, filterValues);
         }
 
-
-        // צריך להוסיף אפדייט לסיסמה+טוקנים
-
+        public async Task<int> UpdateTokensAsync(Player player)
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>();
+            Dictionary<string, object> filterValues = new Dictionary<string, object>();
+            fillValues.Add("Tokens", player.Password);
+            filterValues.Add("PlayerID", player.PlayerID.ToString());
+            return await base.UpdateAsync(fillValues, filterValues);
+        }
 
         public async Task<int> DeleteAsync(Player player) // מחיקת משתמש לפי הID שלו
         {
@@ -97,6 +102,17 @@ namespace DBL
             return await base.DeleteAsync(filterValues);
         }
 
-
+        public async Task<Player> LoginAsync(string Email, string Password)
+        {
+            string sql = @"SELECT * FROM beetlebattlemd.player where Email=@Email AND Password=@Password;";
+            Dictionary<string, object> p = new Dictionary<string, object>();
+            p.Add("Email", Email);
+            p.Add("Password", Password);
+            List<Player> list = (List<Player>)await SelectAllAsync(sql, p);
+            if (list.Count == 1)
+                return list[0];
+            else
+                return null;
+        }
     }
 }
