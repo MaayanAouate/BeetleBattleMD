@@ -1,0 +1,44 @@
+﻿@page "/mylogin"
+@using Model
+@using DBL
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+<h3>Login</h3>
+
+Enter Email:
+<input @bind-value="Email" />
+<br />
+Enter Password:
+<input @bind-value="Password" />
+<br />
+<button class="btn btn-primary" @onclick="DoLogin">Login</button>
+
+<p><a href="/sighup">dont have an account? sigh up here</a></p>
+<div>@s</div>
+
+@code {
+
+    private string Email = "";
+    private string Password = "";
+    private string s;
+    async Task DoLogin()
+    {
+
+
+        PlayerDB DB = new PlayerDB();
+        Player p = await DB.LoginAsync(Email, Password);
+        if (p != null)
+        {
+            await MySession.SetAsync("profile", p);
+            navigationManager.NavigateTo("Home");
+        }
+        else
+        {
+            s = "Incorrect username or password";
+        }
+
+
+    }
+}
