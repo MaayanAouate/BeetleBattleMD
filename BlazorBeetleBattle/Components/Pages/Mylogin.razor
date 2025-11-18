@@ -32,7 +32,7 @@ Enter Password:
         if (p != null)
         {
             await MySession.SetAsync("profile", p);
-            navigationManager.NavigateTo("Home");
+            navigationManager.NavigateTo("/");
         }
         else
         {

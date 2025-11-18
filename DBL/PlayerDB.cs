@@ -104,11 +104,10 @@ namespace DBL
 
         public async Task<Player> LoginAsync(string Email, string Password)
         {
-            string sql = @"SELECT * FROM beetlebattlemd.player where Email=@Email AND Password=@Password;";
             Dictionary<string, object> p = new Dictionary<string, object>();
             p.Add("Email", Email);
             p.Add("Password", Password);
-            List<Player> list = (List<Player>)await SelectAllAsync(sql, p);
+            List<Player> list = (List<Player>)await SelectAllAsync(p);
             if (list.Count == 1)
                 return list[0];
             else
