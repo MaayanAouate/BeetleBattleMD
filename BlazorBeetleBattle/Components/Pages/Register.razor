@@ -1,7 +1,228 @@
-﻿@page "/Register"
+﻿@page "/register"
+@using DBL
+@using Model
+@using System.Threading.Tasks
 
-<h3>Register</h3>
+<style>
+    /*
+            פלטת צבעים:
+            רקעים בהירים: #FFDBDB, #FFC6C6
+            טקסטים ואלמנטים כהים: #644A07, #594100
+        */
+
+    .register-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        /* רקע ורוד בהיר */
+        background-color: #FFDBDB;
+        border-radius: 10px;
+        /* מסגרת בורוד כהה יותר */
+        border: 2px solid #FFC6C6;
+        /* צל עדין בצבע חום */
+        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        text-align: right;
+        /* צבע טקסט ראשי */
+        color: #644A07;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #644A07;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #644A07;
+            font-weight: bold;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        background-color: #ffffff;
+        /* מסגרת בורוד כהה */
+        border: 2px solid #FFC6C6;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        color: #644A07;
+    }
+
+        .form-control::placeholder {
+            color: #FFC6C6;
+            opacity: 1;
+        }
+
+        .form-control:focus {
+            /* בפוקוס - חום כהה מאוד */
+            border-color: #594100;
+            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            outline: none;
+        }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        /* כפתור בצבע חום ברונזה */
+        background-color: #644A07;
+        color: #FFDBDB; /* טקסט בהיר על כפתור כהה */
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        margin-top: 15px;
+    }
+
+        .btn-submit:hover {
+            /* בהובר - חום עמוק */
+            background-color: #594100;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background-color: #FFC6C6;
+            color: #644A07;
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+    .message-box {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* התאמת הודעות שגיאה והצלחה לפלטה */
+    .msg-success {
+        background-color: #FFDBDB;
+        color: #644A07;
+        border: 2px solid #644A07;
+    }
+
+    .msg-error {
+        background-color: #FFC6C6;
+        color: #594100;
+        border: 2px solid #594100;
+    }
+</style>
+
+<div class="register-container">
+    <h2 class="register-header">הרשמה לאתר</h2>
+
+    <div class="form-group">
+        <label>שם משתמש:</label>
+        <input type="text" class="form-control" @bind="username" placeholder="הכנס שם משתמש..." />
+    </div>
+
+    <div class="form-group">
+        <label>אימייל:</label>
+        <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
+    </div>
+
+    <div class="form-group">
+        <label>סיסמה:</label>
+        <input type="password" class="form-control" @bind="password" placeholder="הכנס סיסמה..." />
+    </div>
+
+    <button class="btn-submit" @onclick="RegisterUser" disabled="@isBusy">
+        @if (isBusy)
+        {
+            <span>מעבד נתונים...</span>
+        }
+        else
+        {
+            <span>הרשם עכשיו</span>
+        }
+    </button>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="message-box @messageClass">
+            @message
+        </div>
+    }
+</div>
 
 @code {
+    private string username;
+    private string email;
+    private string password;
 
+    private string message = "";
+    private string messageClass = "";
+    private bool isBusy = false;
+
+    private async Task RegisterUser()
+    {
+        message = "";
+        isBusy = true;
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            message = "נא למלא את כל השדות";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        try
+        {
+            // יצירת מופע של ה-DB
+            PlayerDB db = new PlayerDB();
+
+            // יצירת אובייקט Player חדש
+            Player newPlayer = new Player
+            {
+                UserName = username,
+                Email = email,
+                IsAdmin = 0,
+                Tokens = 0,
+                ProfilePicture = null
+            };
+
+            // קריאה לפונקציית ההוספה
+            Player result = await db.InsertAsync(newPlayer, password);
+
+            if (result != null)
+            {
+                message = "המשתמש נרשם בהצלחה!";
+                messageClass = "msg-success";
+                // איפוס שדות לאחר הצלחה
+                username = string.Empty;
+                email = string.Empty;
+                password = string.Empty;
+            }
+            else
+            {
+                message = "שגיאה ביצירת המשתמש (הוחזר ערך ריק).";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = "שגיאה: " + ex.Message;
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
 }

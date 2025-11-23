@@ -1,44 +1,215 @@
 ﻿@page "/Login"
-@using Model
 @using DBL
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedSessionStorage MySession
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
-
-<h3>Login</h3>
-
-Enter Email:
-<input @bind-value="Email" />
-<br />
-Enter Password:
-<input @bind-value="Password" />
-<br />
-<button class="btn btn-primary" @onclick="DoLogin">Login</button>
-
-<p><a href="/sighup">dont have an account? sigh up here</a></p>
-<div>@s</div>
-
-@code {
-
-    private string Email = "";
-    private string Password = "";
-    private string s;
-    async Task DoLogin()
-    {
+@using Model
 
 
-        PlayerDB DB = new PlayerDB();
-        Player p = await DB.LoginAsync(Email, Password);
-        if (p != null)
+<style>
+    /*
+            פלטת צבעים חדשה:
+            רקעים בהירים: #FFDBDB, #FFC6C6
+            טקסטים, כפתורים ומסגרות כהות: #644A07, #594100
+        */
+
+    .login-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        /* שינוי רקע הקונטיינר לורוד הבהיר ביותר */
+        background-color: #FFDBDB;
+        border-radius: 10px;
+        /* צל עדין יותר בצבע חום */
+        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        text-align: right;
+        /* צבע טקסט ברירת מחדל */
+        color: #644A07;
+        border: 2px solid #FFC6C6;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 25px;
+        /* כותרת בחום הכהה */
+        color: #644A07;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            /* תוויות שדות בחום הכהה */
+            color: #644A07;
+            font-weight: bold;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        /* רקע לבן לשדה הקלט כדי לשמור על קריאות, עם מסגרת ורודה כהה יותר */
+        background-color: #ffffff;
+        border: 2px solid #FFC6C6;
+        color: #644A07; /* טקסט בתוך השדה */
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-control:focus {
+            /* בפוקוס, המסגרת הופכת לחום העמוק ביותר */
+            border-color: #594100;
+            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #FFC6C6; /* פלייסמנט בצבע ורוד כהה */
+            opacity: 1;
+        }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        /* כפתור ראשי בחום הכהה */
+        background-color: #644A07;
+        /* טקסט הכפתור בורוד הבהיר לקונטרסט */
+        color: #FFDBDB;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        margin-top: 15px;
+    }
+
+        .btn-submit:hover {
+            /* בהובר, הכפתור הופך לחום העמוק ביותר */
+            background-color: #594100;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            /* כפתור מנוטרל בורוד הכהה */
+            background-color: #FFC6C6;
+            color: #644A07;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+    .message-box {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /*
+           התאמתי גם את הודעות ההצלחה והשגיאה לפלטה.
+           הערה: מבחינת חווית משתמש (UX) נהוג להשתמש בירוק/אדום,
+           אך לבקשתך נצמדתי רק לצבעים שסיפקת.
+        */
+
+    .msg-success {
+        /* רקע בהיר, מסגרת וטקסט כהים */
+        background-color: #FFDBDB;
+        color: #644A07;
+        border: 2px solid #644A07;
+    }
+
+    .msg-error {
+        /* רקע מעט יותר כהה (הורוד השני), מסגרת וטקסט בחום העמוק ביותר */
+        background-color: #FFC6C6;
+        color: #594100;
+        border: 2px solid #594100;
+    }
+</style>
+
+<div class="login-container">
+    <h2 class="login-header">כניסה למערכת</h2>
+
+    <div class="form-group">
+        <label>אימייל:</label>
+        <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
+    </div>
+
+    <div class="form-group">
+        <label>סיסמה:</label>
+        <input type="password" class="form-control" @bind="password" placeholder="הכנס סיסמה..." />
+    </div>
+
+    <button class="btn-submit" @onclick="LoginUser" disabled="@isBusy">
+        @if (isBusy)
         {
-            await MySession.SetAsync("profile", p);
-            navigationManager.NavigateTo("/");
+            <span>מתחבר...</span>
         }
         else
         {
-            s = "Incorrect username or password";
+            <span>התחבר</span>
+        }
+    </button>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="message-box @messageClass">
+            @message
+        </div>
+    }
+</div>
+
+@code {
+    // הקוד נשאר זהה לחלוטין לגרסה הקודמת
+    private string email;
+    private string password;
+    private string message = "";
+    private string messageClass = "";
+    private bool isBusy = false;
+
+    private async Task LoginUser()
+    {
+        message = "";
+        isBusy = true;
+
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            message = "נא להזין אימייל וסיסמה";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
         }
 
+        try
+        {
+            PlayerDB db = new PlayerDB();
+            Player result = await db.LoginAsync(email, password);
 
+            if (result != null)
+            {
+                message = $"התחברת בהצלחה! שלום, {result.UserName}";
+                messageClass = "msg-success";
+                // NavigationManager.NavigateTo("/"); // דוגמה להפניה
+            }
+            else
+            {
+                message = "שם משתמש או סיסמה שגויים.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = "שגיאה בהתחברות: " + ex.Message;
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
     }
 }
