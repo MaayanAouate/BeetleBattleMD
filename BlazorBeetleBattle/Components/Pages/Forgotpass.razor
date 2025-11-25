@@ -1,0 +1,215 @@
+﻿@page "/Forgotpass"
+@using DBL
+@using Model
+@using System.Linq
+
+<style>
+    /* שימוש באותה פלטת צבעים בדיוק */
+    .forgot-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #FFDBDB; /* רקע ורוד בהיר */
+        border-radius: 10px;
+        border: 2px solid #FFC6C6; /* מסגרת ורודה */
+        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2); /* צל חום */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        text-align: right;
+        color: #644A07; /* טקסט חום */
+    }
+
+    .forgot-header {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #644A07;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #644A07;
+            font-weight: bold;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        background-color: #ffffff;
+        border: 2px solid #FFC6C6;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        color: #644A07;
+    }
+
+        .form-control::placeholder {
+            color: #FFC6C6;
+            opacity: 1;
+        }
+
+        .form-control:focus {
+            border-color: #594100; /* חום כהה בפוקוס */
+            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            outline: none;
+        }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background-color: #644A07; /* כפתור חום */
+        color: #FFDBDB;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        margin-top: 15px;
+    }
+
+        .btn-submit:hover {
+            background-color: #594100;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background-color: #FFC6C6;
+            color: #644A07;
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+    .message-box {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .msg-success {
+        background-color: #FFDBDB;
+        color: #644A07;
+        border: 2px solid #644A07;
+    }
+
+    .msg-error {
+        background-color: #FFC6C6;
+        color: #594100;
+        border: 2px solid #594100;
+    }
+
+    .info-text {
+        font-size: 0.9em;
+        margin-bottom: 20px;
+        color: #594100;
+    }
+</style>
+
+<div class="forgot-container">
+    <h2 class="forgot-header">שחזור סיסמה</h2>
+
+    <p class="info-text">הכנס את כתובת האימייל שלך ואנו נשלח לך קישור לאיפוס הסיסמה.</p>
+
+    <div class="form-group">
+        <label>אימייל:</label>
+        <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
+    </div>
+
+    <button class="btn-submit" @onclick="GenerateResetToken" disabled="@isBusy">
+        @if (isBusy)
+        {
+            <span>בודק נתונים...</span>
+        }
+        else
+        {
+            <span>שלח קישור לאיפוס</span>
+        }
+    </button>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="message-box @messageClass">
+            @message
+        </div>
+    }
+</div>
+
+@code {
+    private string email;
+    private string message = "";
+    private string messageClass = "";
+    private bool isBusy = false;
+
+    private async Task GenerateResetToken()
+    {
+        message = "";
+        isBusy = true;
+
+        // 1. בדיקת תקינות קלט
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            message = "נא להכניס כתובת אימייל";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        try
+        {
+            PlayerDB db = new PlayerDB();
+
+            // 2. שליפת כל המשתמשים כדי למצוא אם האימייל קיים
+            // הערה: בגלל שאין פונקציה GetByEmail ב-PlayerDB, אנו שולפים את כולם ומסננים בזיכרון.
+            // במערכת גדולה מומלץ להוסיף פונקציה ייעודית ב-DB.
+            var allPlayers = await db.GetAllAsync();
+
+            // שימוש ב-LINQ למציאת המשתמש
+            Player foundPlayer = allPlayers.FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
+
+            if (foundPlayer != null)
+            {
+                // 3. יצירת אסימון איפוס (GUID)
+                string resetToken = Guid.NewGuid().ToString();
+
+                // כאן אמור לבוא קוד ששומר את הטוקן במסד הנתונים (למשל בטבלה נפרדת PasswordResetTokens)
+                // ושולח אימייל למשתמש.
+                // מכיוון שהמודל הנוכחי (Player) לא מכיל שדה לטוקן, אנו רק מציגים הודעת הצלחה.
+
+                // דוגמה ללוגיקה עתידית:
+                // await db.SaveTokenAsync(foundPlayer.PlayerID, resetToken);
+                // await EmailService.SendResetLink(foundPlayer.Email, resetToken);
+
+                message = "קישור לאיפוס סיסמה נשלח לאימייל שלך (הדמיה: הטוקן נוצר).";
+                messageClass = "msg-success";
+
+                // ניקוי שדה האימייל
+                email = string.Empty;
+            }
+            else
+            {
+                // המשתמש לא נמצא
+                message = "כתובת האימייל אינה קיימת במערכת.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = "אירעה שגיאה: " + ex.Message;
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+}

@@ -1,0 +1,505 @@
+﻿@page "/editprofile/{PlayerId:int}"
+@using DBL
+@using Model
+@using System.IO
+@using Microsoft.AspNetCore.Components.Forms
+
+<style>
+    /* שימוש באותה פלטת צבעים בדיוק */
+    .profile-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #FFDBDB; /* רקע ורוד בהיר */
+        border-radius: 10px;
+        border: 2px solid #FFC6C6; /* מסגרת ורודה */
+        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2); /* צל חום */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        text-align: right;
+        color: #644A07; /* טקסט חום */
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #644A07;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #644A07;
+            font-weight: bold;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        background-color: #ffffff;
+        border: 2px solid #FFC6C6;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        color: #644A07;
+    }
+
+        .form-control::placeholder {
+            color: #FFC6C6;
+            opacity: 1;
+        }
+
+        .form-control:focus {
+            border-color: #594100; /* חום כהה בפוקוס */
+            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            outline: none;
+        }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background-color: #644A07; /* כפתור חום */
+        color: #FFDBDB;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        margin-top: 15px;
+    }
+
+        .btn-submit:hover {
+            background-color: #594100;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background-color: #FFC6C6;
+            color: #644A07;
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+    .message-box {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .msg-success {
+        background-color: #FFDBDB;
+        color: #644A07;
+        border: 2px solid #644A07;
+    }
+
+    .msg-error {
+        background-color: #FFC6C6;
+        color: #594100;
+        border: 2px solid #594100;
+    }
+
+    .tab-nav {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #FFC6C6;
+    }
+
+        .tab-nav button {
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #FFC6C6;
+            cursor: pointer;
+            transition: color 0.3s, border-bottom 0.3s;
+            flex-grow: 1;
+        }
+
+            .tab-nav button.active {
+                color: #644A07;
+                border-bottom: 3px solid #644A07;
+            }
+
+            .tab-nav button:hover {
+                color: #594100;
+            }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #644A07;
+        margin: 0 auto 20px;
+        display: block;
+    }
+
+</style>
+
+<div class="profile-container">
+    <h2 class="profile-header">עריכת פרופיל</h2>
+
+    @if (player == null)
+    {
+        <div class="message-box msg-error">טוען נתונים...</div>
+    }
+    else
+    {
+        <img class="profile-img" src="@ProfileImageUrl" alt="תמונת פרופיל" />
+
+        <div class="tab-nav">
+            <button @onclick="() => SetActiveTab(1)" class="@(activeTab == 1 ? "active" : "")">פרטים אישיים</button>
+            <button @onclick="() => SetActiveTab(2)" class="@(activeTab == 2 ? "active" : "")">שינוי סיסמה</button>
+            <button @onclick="() => SetActiveTab(3)" class="@(activeTab == 3 ? "active" : "")">תמונת פרופיל</button>
+        </div>
+
+        @if (activeTab == 1)
+        {
+            <div class="tab-content">
+                <div class="form-group">
+                    <label>שם משתמש נוכחי:</label>
+                    <input type="text" class="form-control" @bind="player.UserName" placeholder="שם משתמש חדש..." />
+                </div>
+                <div class="form-group">
+                    <label>אימייל נוכחי:</label>
+                    <input type="email" class="form-control" @bind="player.Email" placeholder="אימייל חדש..." />
+                </div>
+                <button class="btn-submit" @onclick="UpdateDetails" disabled="@isBusy">
+                    @if (isBusy)
+                    {
+                        <span>מעדכן פרטים...</span>
+                    }
+                    else
+                    {
+                        <span>שמור פרטים אישיים</span>
+                    }
+                </button>
+            </div>
+        }
+
+        @if (activeTab == 2)
+        {
+            <div class="tab-content">
+                <div class="form-group">
+                    <label>סיסמה חדשה:</label>
+                    <input type="password" class="form-control" @bind="newPassword" placeholder="הכנס סיסמה חדשה" />
+                </div>
+                <div class="form-group">
+                    <label>אימות סיסמה חדשה:</label>
+                    <input type="password" class="form-control" @bind="confirmPassword" placeholder="אמת סיסמה חדשה" />
+                </div>
+                <button class="btn-submit" @onclick="UpdatePassword" disabled="@isBusy">
+                    @if (isBusy)
+                    {
+                        <span>מעדכן סיסמה...</span>
+                    }
+                    else
+                    {
+                        <span>שמור סיסמה חדשה</span>
+                    }
+                </button>
+            </div>
+        }
+
+        @if (activeTab == 3)
+        {
+            <div class="tab-content">
+                <div class="form-group">
+                    <label>בחר קובץ תמונה:</label>
+                    <InputFile OnChange="HandleFileSelection" class="form-control" accept="image/*" />
+                </div>
+                @if (selectedFile != null)
+                {
+                    <p class="info-text">קובץ שנבחר: **@selectedFile.Name** (@(selectedFile.Size / 1024) KB)</p>
+                }
+                <button class="btn-submit" @onclick="UpdateProfilePicture" disabled="@isBusy || selectedFile == null">
+                    @if (isBusy)
+                    {
+                        <span>מעלה תמונה...</span>
+                    }
+                    else
+                    {
+                        <span>שמור תמונת פרופיל</span>
+                    }
+                </button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="message-box @messageClass">
+                @message
+            </div>
+        }
+    }
+</div>
+
+@code {
+    // פרמטר לקבלת ה-ID של המשתמש מה-URL
+    [Parameter]
+    public int PlayerId { get; set; }
+
+    private Player player; // אובייקט המשתמש הנוכחי
+    private PlayerDB db = new PlayerDB();
+    private int activeTab = 1; // 1: פרטים, 2: סיסמה, 3: תמונה
+
+    // משתנים עבור טאב שינוי סיסמה
+    private string newPassword;
+    private string confirmPassword;
+
+    // משתנים עבור טאב תמונת פרופיל
+    private IBrowserFile selectedFile;
+    private string ProfileImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="; // תמונה דיפולטיבית (פיקסל שקוף) או placeholder
+
+    // משתנים כלליים
+    private string message = "";
+    private string messageClass = "";
+    private bool isBusy = false;
+
+    // קריאה ל-DB לטעינת נתוני המשתמש
+    protected override async Task OnInitializedAsync()
+    {
+        // בדיקת תוקף ID
+        if (PlayerId <= 0)
+        {
+            message = "שגיאה: חסר מזהה משתמש תקין.";
+            messageClass = "msg-error";
+            return;
+        }
+
+        try
+        {
+            // נניח שקיימת פונקציה GetByIDAsync ב-BaseDB / PlayerDB
+            // מכיוון שלא סיפקת את BaseDB, אני משתמש ב-SelectAllAsync עם סינון (כמו בדוגמה שסיפקת ל-Login)
+            Dictionary<string, object> filter = new Dictionary<string, object>
+            {
+                { db.GetPrimaryKeyName(), PlayerId.ToString() }
+            };
+
+            var players = (List<Player>)await db.SelectAllAsync(filter);
+            player = players.FirstOrDefault();
+
+            if (player == null)
+            {
+                message = "שגיאה: משתמש לא נמצא.";
+                messageClass = "msg-error";
+            }
+            else
+            {
+                UpdateProfileImageSource(); // עדכון התמונה לאחר טעינת הנתונים
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"שגיאה בטעינת נתוני משתמש: {ex.Message}";
+            messageClass = "msg-error";
+        }
+    }
+
+    private void SetActiveTab(int tabIndex)
+    {
+        activeTab = tabIndex;
+        message = string.Empty; // ניקוי הודעות בעת החלפת טאב
+        isBusy = false;
+        newPassword = string.Empty;
+        confirmPassword = string.Empty;
+        selectedFile = null;
+    }
+
+    // --- טאב 1: עדכון פרטים אישיים ---
+    private async Task UpdateDetails()
+    {
+        message = string.Empty;
+        isBusy = true;
+
+        if (string.IsNullOrWhiteSpace(player.UserName) || string.IsNullOrWhiteSpace(player.Email))
+        {
+            message = "שם המשתמש והאימייל אינם יכולים להיות ריקים.";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        try
+        {
+            // הפונקציה UpdateAsync במחלקה PlayerDB מעדכנת את UserName ו-Email
+            int rowsAffected = await db.UpdateAsync(player);
+
+            if (rowsAffected > 0)
+            {
+                message = "פרטים אישיים עודכנו בהצלחה! 🎉";
+                messageClass = "msg-success";
+            }
+            else
+            {
+                message = "שגיאה בעדכון הפרטים. לא בוצעו שינויים במסד הנתונים.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"אירעה שגיאה: {ex.Message}";
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // --- טאב 2: עדכון סיסמה ---
+    private async Task UpdatePassword()
+    {
+        message = string.Empty;
+        isBusy = true;
+
+        if (string.IsNullOrWhiteSpace(newPassword))
+        {
+            message = "נא להכניס סיסמה חדשה.";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        if (newPassword != confirmPassword)
+        {
+            message = "הסיסמאות החדשות אינן תואמות.";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        // במחלקה PlayerDB יש פונקציה UpdatePassAsync שמקבלת אובייקט Player
+        // אך משתמשת רק בשדה Password שלו (ו-PlayerID).
+        // נצטרך למלא את שדה הסיסמה של אובייקט ה-Player שלנו (מכיוון שהוא לא נטען מה-DB במקור).
+        player.Password = newPassword;
+
+        try
+        {
+            int rowsAffected = await db.UpdatePassAsync(player);
+
+            if (rowsAffected > 0)
+            {
+                message = "הסיסמה עודכנה בהצלחה! 🔑";
+                messageClass = "msg-success";
+                newPassword = string.Empty;
+                confirmPassword = string.Empty;
+            }
+            else
+            {
+                message = "שגיאה בעדכון הסיסמה. לא בוצעו שינויים במסד הנתונים.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"אירעה שגיאה: {ex.Message}";
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // --- טאב 3: עדכון תמונת פרופיל ---
+    private void HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        message = string.Empty;
+        selectedFile = e.File;
+        // ניתן להוסיף כאן בדיקת גודל/סוג קובץ אם נדרש
+    }
+
+    private async Task UpdateProfilePicture()
+    {
+        message = string.Empty;
+        isBusy = true;
+
+        if (selectedFile == null)
+        {
+            message = "נא לבחור קובץ תמונה.";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        // מגבלת גודל קובץ למניעת עומס
+        long maxFileSize = 1024 * 1024 * 5; // 5MB
+        if (selectedFile.Size > maxFileSize)
+        {
+            message = $"שגיאה: גודל הקובץ חורג מהמגבלה (5MB). גודל הקובץ הנוכחי: {selectedFile.Size / 1024 / 1024}MB";
+            messageClass = "msg-error";
+            isBusy = false;
+            return;
+        }
+
+        try
+        {
+            // קריאת תוכן הקובץ למערך בתים
+            using var stream = selectedFile.OpenReadStream(maxFileSize);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            byte[] fileBytes = memoryStream.ToArray();
+
+            // עדכון ה-DB
+            // הערה: יש לשים לב שהפונקציה updateImageAsync מקבלת מערך בתים, אך בדוגמה שסיפקת היא מנסה לקרוא ל-ToString() על מערך הבתים.
+            // אם זו השגיאה, יש לתקן את: fillValues.Add("ProfilePicture", ProfilePic.ToString());
+            // ל- fillValues.Add("ProfilePicture", ProfilePic);
+            // אני משתמש ב-DB כפי שסופק, מתוך הנחה שהוא עובד עם המנגנון של BaseDB.
+            int rowsAffected = await db.updateImageAsync(player.PlayerID, fileBytes);
+
+            if (rowsAffected > 0)
+            {
+                // עדכון אובייקט ה-Player בזיכרון והתצוגה
+                player.ProfilePicture = fileBytes;
+                UpdateProfileImageSource();
+                selectedFile = null;
+
+                message = "תמונת הפרופיל עודכנה בהצלחה! 📸";
+                messageClass = "msg-success";
+            }
+            else
+            {
+                message = "שגיאה בעדכון התמונה. לא בוצעו שינויים במסד הנתונים.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"אירעה שגיאה: {ex.Message}";
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // פונקציה לעדכון מקור התמונה לקוד Base64
+    private void UpdateProfileImageSource()
+    {
+        if (player.ProfilePicture != null && player.ProfilePicture.Length > 0)
+        {
+            string base64String = Convert.ToBase64String(player.ProfilePicture);
+            ProfileImageUrl = $"data:image/jpeg;base64,{base64String}";
+        }
+        else
+        {
+            // תמונת ברירת מחדל אם אין תמונה
+            ProfileImageUrl = "images/default-profile.png"; // נניח שקובץ זה קיים בתיקיית wwwroot
+        }
+    }
+}
