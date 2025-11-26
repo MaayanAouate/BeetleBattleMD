@@ -2,6 +2,7 @@
 @using DBL
 @using Model
 @using System.Linq
+@using Resend
 
 <style>
     /* שימוש באותה פלטת צבעים בדיוק */
@@ -193,6 +194,20 @@
                 messageClass = "msg-success";
 
                 // ניקוי שדה האימייל
+                IResend resend = ResendClient.Create("re_RM7v8VHD_LE95qwy9R2Do4qEWvs8QVmok"); // Or from DI
+
+                var resp = await resend.EmailSendAsync(new EmailMessage()
+                {
+                    From = "Acme <onboarding@resend.dev>",
+                    To = foundPlayer.Email,
+                    Subject = "hello world",
+                    HtmlBody = "<p>it works!</p>",
+                    ReplyTo = "onboarding@resend.dev",
+                    
+                    Random random = new Random();
+                });
+
+                //Console.WriteLine("Email Id={0}", resp.Content);
                 email = string.Empty;
             }
             else
