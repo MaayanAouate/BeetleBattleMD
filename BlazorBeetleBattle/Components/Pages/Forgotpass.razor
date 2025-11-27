@@ -150,6 +150,7 @@
     private string message = "";
     private string messageClass = "";
     private bool isBusy = false;
+    static Random random = new Random();
 
     private async Task GenerateResetToken()
     {
@@ -192,7 +193,7 @@
 
                 message = "קישור לאיפוס סיסמה נשלח לאימייל שלך (הדמיה: הטוקן נוצר).";
                 messageClass = "msg-success";
-
+                int num = random.Next(100000, 1000000);
                 // ניקוי שדה האימייל
                 IResend resend = ResendClient.Create("re_RM7v8VHD_LE95qwy9R2Do4qEWvs8QVmok"); // Or from DI
 
@@ -201,10 +202,10 @@
                     From = "Acme <onboarding@resend.dev>",
                     To = foundPlayer.Email,
                     Subject = "hello world",
-                    HtmlBody = "<p>it works!</p>",
+                    HtmlBody = $"<p>{num}</p>",
                     ReplyTo = "onboarding@resend.dev",
                     
-                    Random random = new Random();
+                    
                 });
 
                 //Console.WriteLine("Email Id={0}", resp.Content);
