@@ -1,7 +1,7 @@
 ﻿@page "/Login"
 @using DBL
 @using Model
-
+@inject NavigationManager NavigationManager
 
 <style>
     /*
@@ -112,9 +112,7 @@
     }
 
     /*
-           התאמתי גם את הודעות ההצלחה והשגיאה לפלטה.
-           הערה: מבחינת חווית משתמש (UX) נהוג להשתמש בירוק/אדום,
-           אך לבקשתך נצמדתי רק לצבעים שסיפקת.
+           
         */
 
     .msg-success {
@@ -192,9 +190,9 @@
 
             if (result != null)
             {
-                message = $"התחברת בהצלחה! שלום, {result.UserName}";
-                messageClass = "msg-success";
-                // NavigationManager.NavigateTo("/"); // דוגמה להפניה
+                
+                // NavigationManager.NavigateTo("/"); דוגמה להפניה
+                NavigationManager.NavigateTo("/Approved");
             }
             else
             {
