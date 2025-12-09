@@ -17,7 +17,10 @@ namespace Model
         public int IsAdmin { get; set; } // ערך 0 למשתמש וכל ערך אחר לאדמין
         public byte[] ProfilePicture { get; set; }
         public int Tokens { get; set; }
-            //ריק
+        public DateTime DateCode { get; set; }
+        public int TempCode { get; set; }
+
+        //ריק
         public Player() { }
             //בלי סיסמה
         public Player(int playerID, string userName, string email, int isAdmin, byte[] profilePicture, int tokens)

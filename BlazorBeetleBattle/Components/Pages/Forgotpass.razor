@@ -194,6 +194,7 @@
                 message = "קישור לאיפוס סיסמה נשלח לאימייל שלך (הדמיה: הטוקן נוצר).";
                 messageClass = "msg-success";
                 int num = random.Next(100000, 1000000);
+
                 // ניקוי שדה האימייל
                 IResend resend = ResendClient.Create("re_RM7v8VHD_LE95qwy9R2Do4qEWvs8QVmok"); // Or from DI
 
@@ -204,10 +205,12 @@
                     Subject = "hello world",
                     HtmlBody = $"<p>{num}</p>",
                     ReplyTo = "onboarding@resend.dev",
-                    
-                    
-                });
 
+
+                });
+                foundPlayer.TempCode = num;
+                foundPlayer.DateCode = DateTime.Now;
+                
                 //Console.WriteLine("Email Id={0}", resp.Content);
                 email = string.Empty;
             }
