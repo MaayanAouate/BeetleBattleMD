@@ -202,14 +202,17 @@
                 {
                     From = "Acme <onboarding@resend.dev>",
                     To = foundPlayer.Email,
-                    Subject = "hello world",
+                    Subject = "yo joe this is your temporary code yo!",
                     HtmlBody = $"<p>{num}</p>",
                     ReplyTo = "onboarding@resend.dev",
 
 
                 });
+                // 
                 foundPlayer.TempCode = num;
                 foundPlayer.DateCode = DateTime.Now;
+
+
                 
                 //Console.WriteLine("Email Id={0}", resp.Content);
                 email = string.Empty;
