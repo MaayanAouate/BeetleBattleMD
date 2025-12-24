@@ -1,9 +1,27 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
 <center>
     <h1>this is the home page. hello!</h1>
     <h2>please choose your next action below</h2>
-    
+
+    <button class="Login" @onclick="Transfer1">
+        Login
+    </button>
+   
 </center>
+
+
+
+
+
+@code {
+    
+
+    private void Transfer1()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+}
