@@ -3,6 +3,7 @@
 @using Model
 @using System.Linq
 @using Resend
+@inject NavigationManager NavManager
 
 <style>
     /* שימוש באותה פלטת צבעים בדיוק */
@@ -193,7 +194,12 @@
 
                 message = "קישור לאיפוס סיסמה נשלח לאימייל שלך (הדמיה: הטוקן נוצר).";
                 messageClass = "msg-success";
+
                 int num = random.Next(100000, 1000000);
+
+                foundPlayer.TempCode = num;
+                foundPlayer.DateCode = DateTime.Now;
+
 
                 // ניקוי שדה האימייל
                 IResend resend = ResendClient.Create("re_RM7v8VHD_LE95qwy9R2Do4qEWvs8QVmok"); // Or from DI
@@ -209,8 +215,8 @@
 
                 });
                 // 
-                foundPlayer.TempCode = num;
-                foundPlayer.DateCode = DateTime.Now;
+
+                
 
 
                 
