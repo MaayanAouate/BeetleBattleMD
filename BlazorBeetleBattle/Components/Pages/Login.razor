@@ -161,14 +161,25 @@
         </div>
     }
 </div>
+<center> 
+    <button class="Forgotpass" @onclick="Transfer2">
+        Forgot password
+    </button>
+</center>
 
 @code {
+    private void Transfer2()
+    {
+        NavigationManager.NavigateTo("/Forgotpass");
+    }
+
     // הקוד נשאר זהה לחלוטין לגרסה הקודמת
     private string email;
     private string password;
     private string message = "";
     private string messageClass = "";
     private bool isBusy = false;
+
 
     private async Task LoginUser()
     {

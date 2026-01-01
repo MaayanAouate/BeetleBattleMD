@@ -116,25 +116,64 @@
         color: #594100;
     }
 </style>
+@if (b)
+{
+    <div class="forgot-container">
+        <h2 class="forgot-header">שחזור סיסמה</h2>
 
-<div class="forgot-container">
+        <p class="info-text">הכנס את כתובת האימייל שלך ואנו נשלח לך קישור לאיפוס הסיסמה.</p>
+
+        <div class="form-group">
+            <label>אימייל:</label>
+            <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
+        </div>
+
+        <button class="btn-submit" @onclick="GenerateResetToken" disabled="@isBusy">
+            @if (isBusy)
+            {
+                <span>בודק נתונים...</span>
+            }
+            else
+            {
+                <span>שלח קישור לאיפוס</span>
+            }
+        </button>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="message-box @messageClass">
+                @message
+            </div>
+        }
+    </div>
+}
+
+
+
+else
+{
+    <div class="forgot-container">
     <h2 class="forgot-header">שחזור סיסמה</h2>
 
-    <p class="info-text">הכנס את כתובת האימייל שלך ואנו נשלח לך קישור לאיפוס הסיסמה.</p>
+    <p class="info-text">הכנס את קוד האימות שלך ואת הסיסמה החדשה</p>
 
     <div class="form-group">
-        <label>אימייל:</label>
-        <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
+        <label>הכנס קוד:</label>
+            <input type="text" class="form-control" @bind="newCode" placeholder="הכנס כתובת אימייל..." />
+
+            <label>הכנס סיסמה חדשה:</label>
+            <input type="text" class="form-control" @bind="newPassword" placeholder="הכנס כתובת אימייל..." />
+
     </div>
 
-    <button class="btn-submit" @onclick="GenerateResetToken" disabled="@isBusy">
+    <button class="btn-submit" @onclick="UpdatePassword" disabled="@isBusy">
         @if (isBusy)
         {
             <span>בודק נתונים...</span>
         }
         else
         {
-            <span>שלח קישור לאיפוס</span>
+            <span>שלח</span>
         }
     </button>
 
@@ -146,12 +185,34 @@
     }
 </div>
 
+}
+
+
+
+
+
+
+
+
+
+
 @code {
     private string email;
     private string message = "";
     private string messageClass = "";
     private bool isBusy = false;
     static Random random = new Random();
+    bool b = true;
+    private string newCode;
+    private string newPassword = "";
+
+
+
+    private async Task UpdatePassword()
+    {
+        
+    }
+
 
     private async Task GenerateResetToken()
     {
@@ -199,7 +260,8 @@
 
                 foundPlayer.TempCode = num;
                 foundPlayer.DateCode = DateTime.Now;
-
+                int test = await db.UpdateTempCodeAsync(foundPlayer);
+                b = false;
 
                 // ניקוי שדה האימייל
                 IResend resend = ResendClient.Create("re_RM7v8VHD_LE95qwy9R2Do4qEWvs8QVmok"); // Or from DI
@@ -214,12 +276,12 @@
 
 
                 });
-                // 
-
-                
+                //
 
 
-                
+
+
+
                 //Console.WriteLine("Email Id={0}", resp.Content);
                 email = string.Empty;
             }

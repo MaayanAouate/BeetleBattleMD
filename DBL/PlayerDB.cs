@@ -88,7 +88,7 @@ namespace DBL
         {
             Dictionary<string, object> fillValues = new Dictionary<string, object>();
             Dictionary<string, object> filterValues = new Dictionary<string, object>();
-            fillValues.Add("Tokens", player.Password);
+            fillValues.Add("Tokens", player.Tokens);
             filterValues.Add("PlayerID", player.PlayerID.ToString());
             return await base.UpdateAsync(fillValues, filterValues);
         }
@@ -113,7 +113,36 @@ namespace DBL
             else
                 return null;
         }
+        public async Task<Player> ForgotPassAsync(string Email, int Code)
+        {
+            Dictionary<string, object> p = new Dictionary<string, object>();
+            p.Add("Email", Email);
+            p.Add("TempCode", Code);
+            List<Player> list = (List<Player>)await SelectAllAsync(p);
+            if (list.Count == 1)
+            {
+                Player pl =  list[0];
+                TimeSpan ts = DateTime.Now.Subtract(pl.DateCode);
+                double sec = ts.TotalSeconds;
+                if (sec <= (60 * 5))
+                {
+                    return pl;
+                }
+                else return null;
+            }
+            else
+                return null;
+        }
 
-        
+        public async Task<int> UpdateTempCodeAsync(Player player)
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>();
+            Dictionary<string, object> filterValues = new Dictionary<string, object>();
+            fillValues.Add("DateCode", player.DateCode);
+            fillValues.Add("TempCode", player.TempCode);
+            filterValues.Add("PlayerID", player.PlayerID.ToString());
+            return await base.UpdateAsync(fillValues, filterValues);
+        }
+
     }
 }
