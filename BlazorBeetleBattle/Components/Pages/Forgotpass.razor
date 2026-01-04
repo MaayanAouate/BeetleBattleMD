@@ -4,6 +4,7 @@
 @using System.Linq
 @using Resend
 @inject NavigationManager NavManager
+@inject IJSRuntime js;
 
 <style>
     /* שימוש באותה פלטת צבעים בדיוק */
@@ -135,7 +136,7 @@
             }
             else
             {
-                <span>שלח קישור לאיפוס</span>
+                <span>שלח קוד לאיפוס</span>
             }
         </button>
 
@@ -205,13 +206,11 @@ else
     bool b = true;
     private string newCode;
     private string newPassword = "";
+    private int numT;
+    private Player foundPlayerT;
 
 
 
-    private async Task UpdatePassword()
-    {
-        
-    }
 
 
     private async Task GenerateResetToken()
@@ -257,6 +256,9 @@ else
                 messageClass = "msg-success";
 
                 int num = random.Next(100000, 1000000);
+                numT = num;
+
+                foundPlayerT = foundPlayer;
 
                 foundPlayer.TempCode = num;
                 foundPlayer.DateCode = DateTime.Now;
@@ -301,5 +303,24 @@ else
         {
             isBusy = false;
         }
+    }
+
+    private async Task UpdatePassword()
+    {
+        if (int.Parse(newCode)==numT)
+        {
+            PlayerDB db = new PlayerDB();
+            Player result = await db.ForgotPassAsync(newPassword, int.Parse(newCode));
+            if (result != null)
+            {
+                await js.InvokeVoidAsync("alert", $"your passwsord has changed!");
+
+            }
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", $"oh oh you got it wrong!");
+        }
+
     }
 }

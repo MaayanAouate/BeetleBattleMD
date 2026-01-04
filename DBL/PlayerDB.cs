@@ -113,11 +113,11 @@ namespace DBL
             else
                 return null;
         }
-        public async Task<Player> ForgotPassAsync(string Email, int Code)
+        public async Task<Player> ForgotPassAsync(string password, int code)
         {
             Dictionary<string, object> p = new Dictionary<string, object>();
-            p.Add("Email", Email);
-            p.Add("TempCode", Code);
+            p.Add("Password", password);
+            p.Add("TempCode", code);
             List<Player> list = (List<Player>)await SelectAllAsync(p);
             if (list.Count == 1)
             {
