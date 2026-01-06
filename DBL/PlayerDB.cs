@@ -113,12 +113,12 @@ namespace DBL
             else
                 return null;
         }
-        public async Task<Player> ForgotPassAsync(string password, int code)
+        public async Task<Player> ForgotPassAsync(string email, int code)
         {
-            Dictionary<string, object> p = new Dictionary<string, object>();
-            p.Add("Password", password);
-            p.Add("TempCode", code);
-            List<Player> list = (List<Player>)await SelectAllAsync(p);
+            Dictionary<string, object> p = new Dictionary<string, object>(); //search bar
+            p.Add("Email", email); //מה שכותבים בבר
+            p.Add("TempCode", code); // (מה שכותבים בבר (התנאים
+            List<Player> list = (List<Player>)await SelectAllAsync(p); //מנגנון חיפוש
             if (list.Count == 1)
             {
                 Player pl =  list[0];
