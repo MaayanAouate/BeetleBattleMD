@@ -160,10 +160,10 @@ else
 
     <div class="form-group">
         <label>הכנס קוד:</label>
-            <input type="text" class="form-control" @bind="newCode" placeholder="הכנס כתובת אימייל..." />
+            <input type="text" class="form-control" @bind="newCode" placeholder="הכנס קוד..." />
 
             <label>הכנס סיסמה חדשה:</label>
-            <input type="text" class="form-control" @bind="newPassword" placeholder="הכנס כתובת אימייל..." />
+            <input type="text" class="form-control" @bind="newPassword" placeholder="הכנס סיסמה חדשה..." />
 
     </div>
 
@@ -226,7 +226,7 @@ else
             isBusy = false;
             return;
         }
-
+        //
         try
         {
             PlayerDB db = new PlayerDB();

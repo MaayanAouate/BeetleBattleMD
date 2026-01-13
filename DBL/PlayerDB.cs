@@ -117,7 +117,7 @@ namespace DBL
         {
             Dictionary<string, object> p = new Dictionary<string, object>(); //search bar
             p.Add("Email", email); //מה שכותבים בבר
-            p.Add("TempCode", code); // (מה שכותבים בבר (התנאים
+            p.Add("TempCode", code); //   כרגע זה האימות שלי (מה שכותבים בבר (התנאים
             List<Player> list = (List<Player>)await SelectAllAsync(p); //מנגנון חיפוש
             if (list.Count == 1)
             {
