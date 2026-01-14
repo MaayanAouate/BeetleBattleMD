@@ -9,112 +9,112 @@
 <style>
     /* שימוש באותה פלטת צבעים בדיוק */
     .forgot-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 30px;
-        background-color: #FFDBDB; /* רקע ורוד בהיר */
-        border-radius: 10px;
-        border: 2px solid #FFC6C6; /* מסגרת ורודה */
-        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2); /* צל חום */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        direction: rtl;
-        text-align: right;
-        color: #644A07; /* טקסט חום */
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #FFDBDB; /* רקע ורוד בהיר */
+    border-radius: 10px;
+    border: 2px solid #FFC6C6; /* מסגרת ורודה */
+    box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2); /* צל חום */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: rtl;
+    text-align: right;
+    color: #644A07; /* טקסט חום */
     }
 
     .forgot-header {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #644A07;
-        font-weight: 800;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #644A07;
+    font-weight: 800;
     }
 
     .form-group {
-        margin-bottom: 15px;
+    margin-bottom: 15px;
     }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #644A07;
-            font-weight: bold;
-        }
+    .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #644A07;
+    font-weight: bold;
+    }
 
     .form-control {
-        width: 100%;
-        padding: 10px;
-        background-color: #ffffff;
-        border: 2px solid #FFC6C6;
-        border-radius: 5px;
-        box-sizing: border-box;
-        transition: border-color 0.3s, box-shadow 0.3s;
-        color: #644A07;
+    width: 100%;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 2px solid #FFC6C6;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    color: #644A07;
     }
 
-        .form-control::placeholder {
-            color: #FFC6C6;
-            opacity: 1;
-        }
+    .form-control::placeholder {
+    color: #FFC6C6;
+    opacity: 1;
+    }
 
-        .form-control:focus {
-            border-color: #594100; /* חום כהה בפוקוס */
-            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
-            outline: none;
-        }
+    .form-control:focus {
+    border-color: #594100; /* חום כהה בפוקוס */
+    box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+    outline: none;
+    }
 
     .btn-submit {
-        width: 100%;
-        padding: 12px;
-        background-color: #644A07; /* כפתור חום */
-        color: #FFDBDB;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.1s;
-        margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background-color: #644A07; /* כפתור חום */
+    color: #FFDBDB;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 15px;
     }
 
-        .btn-submit:hover {
-            background-color: #594100;
-        }
+    .btn-submit:hover {
+    background-color: #594100;
+    }
 
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
+    .btn-submit:active {
+    transform: scale(0.98);
+    }
 
-        .btn-submit:disabled {
-            background-color: #FFC6C6;
-            color: #644A07;
-            opacity: 0.8;
-            cursor: not-allowed;
-        }
+    .btn-submit:disabled {
+    background-color: #FFC6C6;
+    color: #644A07;
+    opacity: 0.8;
+    cursor: not-allowed;
+    }
 
     .message-box {
-        margin-top: 20px;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-        font-weight: bold;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
     }
 
     .msg-success {
-        background-color: #FFDBDB;
-        color: #644A07;
-        border: 2px solid #644A07;
+    background-color: #FFDBDB;
+    color: #644A07;
+    border: 2px solid #644A07;
     }
 
     .msg-error {
-        background-color: #FFC6C6;
-        color: #594100;
-        border: 2px solid #594100;
+    background-color: #FFC6C6;
+    color: #594100;
+    border: 2px solid #594100;
     }
 
     .info-text {
-        font-size: 0.9em;
-        margin-bottom: 20px;
-        color: #594100;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    color: #594100;
     }
 </style>
 @if (b)
@@ -154,37 +154,37 @@
 else
 {
     <div class="forgot-container">
-    <h2 class="forgot-header">שחזור סיסמה</h2>
+        <h2 class="forgot-header">שחזור סיסמה</h2>
 
-    <p class="info-text">הכנס את קוד האימות שלך ואת הסיסמה החדשה</p>
+        <p class="info-text">הכנס את קוד האימות שלך ואת הסיסמה החדשה</p>
 
-    <div class="form-group">
-        <label>הכנס קוד:</label>
+        <div class="form-group">
+            <label>הכנס קוד:</label>
             <input type="text" class="form-control" @bind="newCode" placeholder="הכנס קוד..." />
 
             <label>הכנס סיסמה חדשה:</label>
             <input type="text" class="form-control" @bind="newPassword" placeholder="הכנס סיסמה חדשה..." />
 
-    </div>
-
-    <button class="btn-submit" @onclick="UpdatePassword" disabled="@isBusy">
-        @if (isBusy)
-        {
-            <span>בודק נתונים...</span>
-        }
-        else
-        {
-            <span>שלח</span>
-        }
-    </button>
-
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <div class="message-box @messageClass">
-            @message
         </div>
-    }
-</div>
+
+        <button class="btn-submit" @onclick="UpdatePassword" disabled="@isBusy">
+            @if (isBusy)
+            {
+                <span>בודק נתונים...</span>
+            }
+            else
+            {
+                <span>שלח</span>
+            }
+        </button>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="message-box @messageClass">
+                @message
+            </div>
+        }
+    </div>
 
 }
 
@@ -285,7 +285,7 @@ else
 
 
                 //Console.WriteLine("Email Id={0}", resp.Content);
-                email = string.Empty;
+                // email = string.Empty;
             }
             else
             {
@@ -310,8 +310,13 @@ else
         if (int.Parse(newCode)==numT)
         {
             PlayerDB db = new PlayerDB();
-            Player result = await db.ForgotPassAsync(newPassword, int.Parse(newCode));
-            if (result != null)
+            //Player result = await db.ForgotPassAsync(newPassword, int.Parse(newCode));
+            Player player = new Player();
+            player.Password = newPassword;
+            player.TempCode = int.Parse(newCode);
+            player.Email = email;
+            int a = await db.UpdatePass2Async(player);
+            if (a != 0)
             {
                 await js.InvokeVoidAsync("alert", $"your passwsord has changed!");
 

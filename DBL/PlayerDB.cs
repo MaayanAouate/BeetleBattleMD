@@ -66,6 +66,17 @@ namespace DBL
             return await base.UpdateAsync(fillValues, filterValues);
         }
 
+        public async Task<int> UpdatePass2Async(Player player)// אפדייט נתונים+סיסמה
+        {
+            Dictionary<string, object> fillValues = new Dictionary<string, object>();
+            Dictionary<string, object> filterValues = new Dictionary<string, object>();
+            fillValues.Add("Password", player.Password);
+            filterValues.Add("TempCode", player.TempCode.ToString());
+            filterValues.Add("Email", player.Email.ToString());
+
+            return await base.UpdateAsync(fillValues, filterValues);
+        }
+
         public async Task<int> UpdatePassAsync(Player player)// אפדייט נתונים+סיסמה
         {
             Dictionary<string, object> fillValues = new Dictionary<string, object>();
@@ -117,7 +128,7 @@ namespace DBL
         {
             Dictionary<string, object> p = new Dictionary<string, object>(); //search bar
             p.Add("Email", email); //מה שכותבים בבר
-            p.Add("TempCode", code); //   כרגע זה האימות שלי (מה שכותבים בבר (התנאים
+            p.Add("TempCode", code); //   כרגע זה אימות הקוד(מה שכותבים בבר (התנאים
             List<Player> list = (List<Player>)await SelectAllAsync(p); //מנגנון חיפוש
             if (list.Count == 1)
             {
