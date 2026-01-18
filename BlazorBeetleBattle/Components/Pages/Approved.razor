@@ -1,9 +1,61 @@
 ﻿@page "/Approved"
+@inject NavigationManager NavigationManager
+@using Model
+@using DBL
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime js
+
 
 <center>
     <h1>youre in!</h1>
 </center>
 <center>
     <img src="YES!.jpg" alt="house" width="600" height="600">
+
+
+
+    <button class="btn-submit" @onclick="ToProfile" disabled="@isBusy">
+        @if (isBusy)
+        {
+            <span>מתחבר...</span>
+        }
+        else
+        {
+            <span>התחבר</span>
+        }
+    </button>
 </center>
 @* עובד *@
+
+@code
+{
+    public Player p { get; set; } = null; // עצם גישה לעצם משתמש
+
+    // מה שמונע ממשתמשים לגשת לדפים באתר ללא התחברות המשתמש
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var player = await MySession.GetAsync<Player>("Player");
+            if (player.Success)
+            {
+                p = (Player)(player.Value);
+                StateHasChanged();
+            }
+            else
+            {
+                navigationManager.NavigateTo("/Login");
+            }
+        }
+    }
+
+
+    private bool isBusy = false;
+    
+    private void ToProfile()
+    {
+        NavigationManager.NavigateTo("/ProfilePage");
+    }
+}

@@ -1,8 +1,11 @@
 ﻿@page "/Login"
-@using DBL
-@using Model
 @inject NavigationManager NavigationManager
-
+@using Model
+@using DBL
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime js
 <style>
     /*
             פלטת צבעים חדשה:
@@ -197,12 +200,12 @@
         try
         {
             PlayerDB db = new PlayerDB();
-            Player result = await db.LoginAsync(email, password);
+            Player result = await db.LoginAsync(email, password); //המשתמש
 
             if (result != null)
             {
 
-                
+                await MySession.SetAsync("Player", result); //שומר נתונים של משתמש לדפים הבאים 
                 // NavigationManager.NavigateTo("/"); דוגמה להפניה
                 NavigationManager.NavigateTo("/Approved");
             }
