@@ -1,0 +1,212 @@
+﻿@page "/UpdateDetails"
+@using DBL
+@using Model
+@using System.Threading.Tasks
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+
+<style>
+    /* פלטת צבעים זהה */
+    .update-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #FFDBDB;
+        border-radius: 10px;
+        border: 2px solid #FFC6C6;
+        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        direction: rtl;
+        text-align: right;
+        color: #644A07;
+    }
+
+    .update-header {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #644A07;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #644A07;
+        font-weight: bold;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        background-color: #ffffff;
+        border: 2px solid #FFC6C6;
+        border-radius: 5px;
+        box-sizing: border-box;
+        color: #644A07;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background-color: #644A07;
+        color: #FFDBDB;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+    }
+
+    .message-box {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .msg-success { background-color: #FFDBDB; color: #644A07; border: 2px solid #644A07; }
+    .msg-error { background-color: #FFC6C6; color: #594100; border: 2px solid #594100; }
+</style>
+
+<div class="update-container">
+    <h2 class="update-header">עריכת פרטי חשבון</h2>
+
+    @if (currentUser == null && !isLoaded)
+    {
+        <p>טוען נתונים...</p>
+    }
+    else
+    {
+        <div class="form-group">
+            <label>שם משתמש:</label>
+            <input type="text" class="form-control" @bind="username" />
+        </div>
+
+        <div class="form-group">
+            <label>אימייל:</label>
+            <input type="email" class="form-control" @bind="email" />
+        </div>
+
+        <div class="form-group">
+            <label>סיסמה:</label>
+            <input type="password" class="form-control" @bind="password" />
+        </div>
+
+        <button class="btn-submit" @onclick="UpdateUserDetails" disabled="@isBusy">
+            @(isBusy ? "מעדכן..." : "שמור שינויים")
+        </button>
+    }
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="message-box @messageClass">
+            @message
+        </div>
+    }
+</div>
+
+@code {
+    private Player currentUser;
+    private string username;
+    private string email;
+    private string password;
+
+    private string message = "";
+    private string messageClass = "";
+    private bool isBusy = false;
+    private bool isLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // שליפת האובייקט מה-Session
+            var result = await MySession.GetAsync<Player>("Player");
+            if (result.Success && result.Value != null)
+            {
+                currentUser = result.Value;
+                
+                // השמת הערכים במשתני העזר שקשורים ל-Input
+                username = currentUser.UserName;
+                email = currentUser.Email;
+                password = currentUser.Password; 
+            }
+            else
+            {
+                // אם אין משתמש ב-Session, נשלח אותו להתחבר
+                NavigationManager.NavigateTo("/Login");
+            }
+        }
+        catch (Exception)
+        {
+            message = "שגיאה בטעינת נתוני משתמש";
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isLoaded = true;
+        }
+    }
+
+    private async Task UpdateUserDetails()
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email))
+        {
+            message = "נא למלא שדות חובה";
+            messageClass = "msg-error";
+            return;
+        }
+
+        isBusy = true;
+        message = "";
+
+        try
+        {
+            PlayerDB db = new PlayerDB();
+
+            // עדכון האובייקט המקומי
+            currentUser.UserName = username;
+            currentUser.Email = email;
+            currentUser.Password = password;
+
+            // 1. עדכון פרטים ב-DB
+            int rowsAffected = await db.UpdateAsync(currentUser);
+
+            // 2. עדכון סיסמה ב-DB (אם השתנתה)
+            await db.UpdatePassAsync(currentUser);
+
+            if (rowsAffected > 0)
+            {
+                // 3. עדכון ה-Session עם הנתונים החדשים!
+                await MySession.SetAsync("Player", currentUser);
+
+                message = "הפרטים עודכנו בהצלחה בבסיס הנתונים ובמערכת!";
+                messageClass = "msg-success";
+            }
+            else
+            {
+                message = "לא בוצעו שינויים.";
+                messageClass = "msg-error";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = "שגיאה: " + ex.Message;
+            messageClass = "msg-error";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+}
