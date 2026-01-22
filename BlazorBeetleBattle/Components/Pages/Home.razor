@@ -10,8 +10,15 @@
     <button class="Login" @onclick="Transfer1">
         Login
     </button>
-   
-</center>
+
+    <button class="Register" @onclick="Transfer2">
+        Sign up
+    </button>
+
+
+ @*    <a href="/Register" > dont have an account? sign up here! </a> *@
+ @* דוגמה לקישור  *@
+</center>>
 
 
 
@@ -19,7 +26,10 @@
 
 @code {
 
-   
+    private void Transfer2()
+    {
+        NavigationManager.NavigateTo("/Register");
+    }
 
     private void Transfer1()
     {

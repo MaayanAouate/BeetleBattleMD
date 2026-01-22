@@ -153,10 +153,12 @@
         }
     </button>
 
-    @if (!string.IsNullOrEmpty(message))
+    @if (!string.IsNullOrEmpty(message)) //אם ההודעה לא ריקה אז זה יכתוב את ההודעה
     {
         <div class="message-box @messageClass">
             @message
+            <a href="/Login">click this to login</a>
+            @* אם זה שולח את ההודעה זה אומר שהרשמה עבדה והשחקן חדש קיים ואפשר להתחבר למשחק *@
         </div>
     }
 </div>
@@ -165,6 +167,7 @@
     private string username;
     private string email;
     private string password;
+    private bool INSIDE = false; // לא שימשי בעליל אבל הוא חמוד אז אני משאירה אותו
 
     private string message = "";
     private string messageClass = "";

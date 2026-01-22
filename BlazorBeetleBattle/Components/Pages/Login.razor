@@ -6,6 +6,8 @@
 @inject ProtectedSessionStorage MySession
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject IJSRuntime js
+
+
 <style>
     /*
             פלטת צבעים חדשה:
@@ -165,16 +167,11 @@
     }
 </div>
 <center> 
-    <button class="Forgotpass" @onclick="Transfer2">
-        Forgot password
-    </button>
+    <a href="/Forgotpass"> forgot password... </a>
 </center>
 
 @code {
-    private void Transfer2()
-    {
-        NavigationManager.NavigateTo("/Forgotpass");
-    }
+    
 
     // הקוד נשאר זהה לחלוטין לגרסה הקודמת
     private string email;

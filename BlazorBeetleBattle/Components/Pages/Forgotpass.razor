@@ -180,9 +180,20 @@ else
 
         @if (!string.IsNullOrEmpty(message))
         {
-            <div class="message-box @messageClass">
-                @message
-            </div>
+            @if (THENERD)
+            {
+                <div class="message-box @messageClass">
+                    @message
+                    <a href="/Login">Login</a>
+                </div>
+            }
+            else
+            {
+                <div class="message-box @messageClass">
+                    @message
+                </div>
+            }
+
         }
     </div>
 
@@ -209,7 +220,7 @@ else
     private int numT;
     private Player foundPlayerT;
 
-
+    private bool THENERD = false;
 
 
 
@@ -217,6 +228,7 @@ else
     {
         message = "";
         isBusy = true;
+
 
         // 1. בדיקת תקינות קלט
         if (string.IsNullOrWhiteSpace(email))
@@ -252,7 +264,7 @@ else
                 // await db.SaveTokenAsync(foundPlayer.PlayerID, resetToken);
                 // await EmailService.SendResetLink(foundPlayer.Email, resetToken);
 
-                message = "קישור לאיפוס סיסמה נשלח לאימייל שלך (הדמיה: הטוקן נוצר).";
+                message = "קישור לאיפוס סיסמה נשלח לאימייל שלך ";
                 messageClass = "msg-success";
 
                 int num = random.Next(100000, 1000000);
@@ -319,7 +331,7 @@ else
             if (a != 0)
             {
                 await js.InvokeVoidAsync("alert", $"your passwsord has changed!");
-
+                THENERD = true;
             }
         }
         else
