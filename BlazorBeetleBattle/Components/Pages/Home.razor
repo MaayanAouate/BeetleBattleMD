@@ -1,31 +1,114 @@
 ﻿@page "/"
 @inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - Welcome</PageTitle>
 
-<center>
-    <h1>this is the home page. hello!</h1>
-    <h2>please choose your next action below</h2>
+<style>
+    /* Cohesive Palette:
+           #9A3F3F - Primary (Deep Red)
+           #C1856D - Secondary (Muted Rose)
+           #E6CFA9 - Accent (Sandy Cream)
+           #FBF9D1 - Background (Pale Yellow)
+        */
 
-    <button class="Login" @onclick="Transfer1">
-        Login
-    </button>
+    .home-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        direction: rtl; /* Keeps it consistent with your Hebrew interface */
+    }
 
-    <button class="Register" @onclick="Transfer2">
-        Sign up
-    </button>
+    .home-container {
+        max-width: 500px;
+        width: 90%;
+        padding: 40px;
+        background-color: #FBF9D1;
+        border-radius: 15px;
+        border: 2px solid #E6CFA9;
+        box-shadow: 0 10px 30px rgba(154, 63, 63, 0.1);
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
+    .home-header {
+        color: #9A3F3F;
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        font-weight: 800;
+    }
 
- @*    <a href="/Register" > dont have an account? sign up here! </a> *@
- @* דוגמה לקישור  *@
-</center>>
+    .home-subheader {
+        color: #C1856D;
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        font-weight: 400;
+    }
 
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 
+    .btn-home {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 140px;
+        border: none;
+    }
 
+    /* Primary Style - Sign Up */
+    .btn-register {
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+    }
 
+        .btn-register:hover {
+            background-color: #C1856D;
+            transform: translateY(-2px);
+        }
+
+    /* Secondary Style - Login */
+    .btn-login {
+        background-color: #E6CFA9;
+        color: #9A3F3F;
+        border: 2px solid #9A3F3F;
+    }
+
+        .btn-login:hover {
+            background-color: #FBF9D1;
+            transform: translateY(-2px);
+        }
+
+    .btn-home:active {
+        transform: scale(0.95);
+    }
+</style>
+
+<div class="home-wrapper">
+    <div class="home-container">
+        <h1 class="home-header">ברוכים הבאים</h1>
+        <h2 class="home-subheader">אנא בחר את הפעולה הבאה שלך:</h2>
+
+        <div class="button-group">
+            <button class="btn-home btn-login" @onclick="Transfer1">
+                התחברות
+            </button>
+
+            <button class="btn-home btn-register" @onclick="Transfer2">
+                הרשמה
+            </button>
+        </div>
+    </div>
+</div>
 
 @code {
-
     private void Transfer2()
     {
         NavigationManager.NavigateTo("/Register");

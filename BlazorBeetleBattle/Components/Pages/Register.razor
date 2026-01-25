@@ -5,122 +5,122 @@
 @inject NavigationManager NavigationManager
 
 <style>
-    /*
-            פלטת צבעים:
-            רקעים בהירים: #FFDBDB, #FFC6C6
-            טקסטים ואלמנטים כהים: #644A07, #594100
+    /* New Palette Applied:
+           #9A3F3F - Primary (Deep Red)
+           #C1856D - Secondary (Muted Rose)
+           #E6CFA9 - Accent (Sandy Cream)
+           #FBF9D1 - Background (Pale Yellow)
         */
 
     .register-container {
         max-width: 400px;
         margin: 50px auto;
         padding: 30px;
-        /* רקע ורוד בהיר */
-        background-color: #FFDBDB;
-        border-radius: 10px;
-        /* מסגרת בורוד כהה יותר */
-        border: 2px solid #FFC6C6;
-        /* צל עדין בצבע חום */
-        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FBF9D1; /* Lightest shade for background */
+        border-radius: 12px;
+        border: 2px solid #E6CFA9; /* Sandy border */
+        box-shadow: 0 8px 20px rgba(154, 63, 63, 0.15); /* Soft deep-red shadow */
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         direction: rtl;
         text-align: right;
-        /* צבע טקסט ראשי */
-        color: #644A07;
+        color: #9A3F3F; /* Deep red for text */
     }
 
     .register-header {
         text-align: center;
         margin-bottom: 25px;
-        color: #644A07;
+        color: #9A3F3F;
         font-weight: 800;
+        font-size: 1.8rem;
     }
 
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #644A07;
-            font-weight: bold;
+            margin-bottom: 6px;
+            color: #C1856D; /* Muted rose for labels */
+            font-weight: 600;
         }
 
     .form-control {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         background-color: #ffffff;
-        /* מסגרת בורוד כהה */
-        border: 2px solid #FFC6C6;
-        border-radius: 5px;
+        border: 2px solid #E6CFA9;
+        border-radius: 6px;
         box-sizing: border-box;
-        transition: border-color 0.3s, box-shadow 0.3s;
-        color: #644A07;
+        transition: all 0.3s ease;
+        color: #9A3F3F;
     }
 
         .form-control::placeholder {
-            color: #FFC6C6;
-            opacity: 1;
+            color: #C1856D;
+            opacity: 0.6;
         }
 
         .form-control:focus {
-            /* בפוקוס - חום כהה מאוד */
-            border-color: #594100;
-            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            border-color: #9A3F3F;
+            box-shadow: 0 0 8px rgba(154, 63, 63, 0.2);
             outline: none;
         }
 
     .btn-submit {
         width: 100%;
-        padding: 12px;
-        /* כפתור בצבע חום ברונזה */
-        background-color: #644A07;
-        color: #FFDBDB; /* טקסט בהיר על כפתור כהה */
+        padding: 14px;
+        background-color: #9A3F3F; /* Primary Deep Red */
+        color: #FBF9D1; /* Pale text on dark background */
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s, transform 0.1s;
-        margin-top: 15px;
+        margin-top: 20px;
     }
 
         .btn-submit:hover {
-            /* בהובר - חום עמוק */
-            background-color: #594100;
+            background-color: #C1856D; /* Switches to Muted Rose on hover */
         }
 
         .btn-submit:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
         .btn-submit:disabled {
-            background-color: #FFC6C6;
-            color: #644A07;
-            opacity: 0.8;
+            background-color: #E6CFA9;
+            color: #C1856D;
             cursor: not-allowed;
         }
 
     .message-box {
         margin-top: 20px;
-        padding: 10px;
-        border-radius: 5px;
+        padding: 12px;
+        border-radius: 6px;
         text-align: center;
         font-weight: bold;
     }
 
-    /* התאמת הודעות שגיאה והצלחה לפלטה */
     .msg-success {
-        background-color: #FFDBDB;
-        color: #644A07;
-        border: 2px solid #644A07;
+        background-color: #E6CFA9;
+        color: #9A3F3F;
+        border: 1px solid #9A3F3F;
     }
 
     .msg-error {
-        background-color: #FFC6C6;
-        color: #594100;
-        border: 2px solid #594100;
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+        border: 1px solid #C1856D;
+    }
+
+    .login-link {
+        display: block;
+        margin-top: 10px;
+        color: #C1856D;
+        text-decoration: underline;
+        font-size: 0.9rem;
     }
 </style>
 
@@ -128,17 +128,17 @@
     <h2 class="register-header">הרשמה לאתר</h2>
 
     <div class="form-group">
-        <label>שם משתמש:</label>
+        <label>שם משתמש</label>
         <input type="text" class="form-control" @bind="username" placeholder="הכנס שם משתמש..." />
     </div>
 
     <div class="form-group">
-        <label>אימייל:</label>
+        <label>אימייל</label>
         <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
     </div>
 
     <div class="form-group">
-        <label>סיסמה:</label>
+        <label>סיסמה</label>
         <input type="password" class="form-control" @bind="password" placeholder="הכנס סיסמה..." />
     </div>
 
@@ -153,12 +153,12 @@
         }
     </button>
 
-    @if (!string.IsNullOrEmpty(message)) //אם ההודעה לא ריקה אז זה יכתוב את ההודעה
+    @if (!string.IsNullOrEmpty(message))
     {
         <div class="message-box @messageClass">
             @message
-            <a href="/Login">click this to login</a>
-            @* אם זה שולח את ההודעה זה אומר שהרשמה עבדה והשחקן חדש קיים ואפשר להתחבר למשחק *@
+            <br />
+            <a href="/Login" class="login-link">לחץ כאן להתחברות</a>
         </div>
     }
 </div>
@@ -167,7 +167,7 @@
     private string username;
     private string email;
     private string password;
-    private bool INSIDE = false; // לא שימשי בעליל אבל הוא חמוד אז אני משאירה אותו
+    private bool INSIDE = false;
 
     private string message = "";
     private string messageClass = "";
@@ -188,10 +188,7 @@
 
         try
         {
-            // יצירת מופע של ה-DB
             PlayerDB db = new PlayerDB();
-
-            // יצירת אובייקט Player חדש
             Player newPlayer = new Player
             {
                 UserName = username,
@@ -201,21 +198,19 @@
                 ProfilePicture = null
             };
 
-            // קריאה לפונקציית ההוספה
             Player result = await db.InsertAsync(newPlayer, password);
 
             if (result != null)
             {
                 message = "המשתמש נרשם בהצלחה!";
                 messageClass = "msg-success";
-                // איפוס שדות לאחר הצלחה
                 username = string.Empty;
                 email = string.Empty;
                 password = string.Empty;
             }
             else
             {
-                message = "שגיאה ביצירת המשתמש (הוחזר ערך ריק).";
+                message = "שגיאה ביצירת המשתמש.";
                 messageClass = "msg-error";
             }
         }
@@ -228,6 +223,5 @@
         {
             isBusy = false;
         }
-        // hello
     }
 }

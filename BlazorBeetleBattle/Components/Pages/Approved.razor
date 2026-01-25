@@ -7,41 +7,121 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject IJSRuntime js
 
+<style>
+    /* Cohesive Palette:
+           #9A3F3F - Primary (Deep Red)
+           #C1856D - Secondary (Muted Rose)
+           #E6CFA9 - Accent (Sandy Cream)
+           #FBF9D1 - Background (Pale Yellow)
+        */
 
-<center>
-    <h1>youre in!</h1>
-</center>
-<center>
-    <img src="YES!.jpg" alt="house" width="600" height="600">
+    .approved-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
+    .approved-container {
+        max-width: 650px;
+        width: 100%;
+        background-color: #FBF9D1;
+        border-radius: 20px;
+        border: 3px solid #E6CFA9;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(154, 63, 63, 0.15);
+    }
 
+    .approved-header {
+        color: #9A3F3F;
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
 
-    <button class="btn-submit" @onclick="ToProfile" disabled="@isBusy">
-        @if (isBusy)
-        {
-            <span>מתחבר...</span>
+    .success-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        border: 5px solid #E6CFA9;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-profile {
+        display: inline-block;
+        padding: 15px 40px;
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+        border: none;
+        border-radius: 50px; /* Rounded pill shape for a "Success" button */
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(154, 63, 63, 0.3);
+    }
+
+        .btn-profile:hover {
+            background-color: #C1856D;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(154, 63, 63, 0.4);
         }
-        else
-        {
-            <span>התחבר</span>
+
+        .btn-profile:active {
+            transform: scale(0.95);
         }
-    </button>
-</center>
-@* עובד *@
+
+    .welcome-text {
+        color: #C1856D;
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+</style>
+
+<div class="approved-wrapper">
+    <div class="approved-container">
+        <h1 class="approved-header">You're In!</h1>
+
+        @if (p != null)
+        {
+            <p class="welcome-text">ברוך הבא, <strong>@p.UserName</strong>! שמחים שחזרת.</p>
+        }
+
+        <img src="YES!.jpg" alt="Success" class="success-image">
+
+        <div class="action-area">
+            <button class="btn-profile" @onclick="ToProfile" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span>טוען...</span>
+                }
+                else
+                {
+                    <span>מעבר לפרופיל האישי</span>
+                }
+            </button>
+        </div>
+    </div>
+</div>
 
 @code
 {
-    public Player p { get; set; } = null; // עצם גישה לעצם משתמש
+    public Player p { get; set; } = null;
+    private bool isBusy = false;
 
-    // מה שמונע ממשתמשים לגשת לדפים באתר ללא התחברות המשתמש
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var player = await MySession.GetAsync<Player>("Player");
-            if (player.Success)
+            if (player.Success && player.Value != null)
             {
-                p = (Player)(player.Value);
+                p = player.Value;
                 StateHasChanged();
             }
             else
@@ -51,11 +131,9 @@
         }
     }
 
-
-    private bool isBusy = false;
-    
     private void ToProfile()
     {
-        NavigationManager.NavigateTo("/ProfilePage");
+        isBusy = true;
+        NavigationManager.NavigateTo("/UpdateDetails");
     }
 }

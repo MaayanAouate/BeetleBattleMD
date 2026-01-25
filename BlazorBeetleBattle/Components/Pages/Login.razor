@@ -7,83 +7,76 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject IJSRuntime js
 
-
 <style>
-    /*
-            פלטת צבעים חדשה:
-            רקעים בהירים: #FFDBDB, #FFC6C6
-            טקסטים, כפתורים ומסגרות כהות: #644A07, #594100
+    /* Cohesive Palette:
+           #9A3F3F - Primary (Deep Red)
+           #C1856D - Secondary (Muted Rose)
+           #E6CFA9 - Accent (Sandy Cream)
+           #FBF9D1 - Background (Pale Yellow)
         */
 
     .login-container {
         max-width: 400px;
         margin: 50px auto;
         padding: 30px;
-        /* שינוי רקע הקונטיינר לורוד הבהיר ביותר */
-        background-color: #FFDBDB;
-        border-radius: 10px;
-        /* צל עדין יותר בצבע חום */
-        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
+        background-color: #FBF9D1; /* Light cream background */
+        border-radius: 12px;
+        border: 2px solid #E6CFA9; /* Sandy border */
+        box-shadow: 0 8px 25px rgba(154, 63, 63, 0.1); /* Subtle deep red shadow */
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         direction: rtl;
         text-align: right;
-        /* צבע טקסט ברירת מחדל */
-        color: #644A07;
-        border: 2px solid #FFC6C6;
+        color: #9A3F3F; /* Primary text color */
     }
 
     .login-header {
         text-align: center;
         margin-bottom: 25px;
-        /* כותרת בחום הכהה */
-        color: #644A07;
+        color: #9A3F3F;
+        font-weight: 800;
+        font-size: 1.8rem;
     }
 
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            /* תוויות שדות בחום הכהה */
-            color: #644A07;
+            margin-bottom: 6px;
+            color: #C1856D; /* Muted rose for labels */
             font-weight: bold;
         }
 
     .form-control {
         width: 100%;
-        padding: 10px;
-        /* רקע לבן לשדה הקלט כדי לשמור על קריאות, עם מסגרת ורודה כהה יותר */
+        padding: 12px;
         background-color: #ffffff;
-        border: 2px solid #FFC6C6;
-        color: #644A07; /* טקסט בתוך השדה */
-        border-radius: 5px;
+        border: 2px solid #E6CFA9;
+        color: #9A3F3F;
+        border-radius: 6px;
         box-sizing: border-box;
-        transition: border-color 0.3s, box-shadow 0.3s;
+        transition: all 0.3s ease;
     }
 
         .form-control:focus {
-            /* בפוקוס, המסגרת הופכת לחום העמוק ביותר */
-            border-color: #594100;
-            box-shadow: 0 0 5px rgba(89, 65, 0, 0.3);
+            border-color: #9A3F3F;
+            box-shadow: 0 0 8px rgba(154, 63, 63, 0.2);
             outline: none;
         }
 
         .form-control::placeholder {
-            color: #FFC6C6; /* פלייסמנט בצבע ורוד כהה */
-            opacity: 1;
+            color: #E6CFA9;
+            opacity: 0.8;
         }
 
     .btn-submit {
         width: 100%;
-        padding: 12px;
-        /* כפתור ראשי בחום הכהה */
-        background-color: #644A07;
-        /* טקסט הכפתור בורוד הבהיר לקונטרסט */
-        color: #FFDBDB;
+        padding: 14px;
+        background-color: #9A3F3F; /* Deep Red Button */
+        color: #FBF9D1; /* Light text */
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         font-size: 18px;
         font-weight: bold;
         cursor: pointer;
@@ -92,18 +85,16 @@
     }
 
         .btn-submit:hover {
-            /* בהובר, הכפתור הופך לחום העמוק ביותר */
-            background-color: #594100;
+            background-color: #C1856D; /* Switches to Rose on hover */
         }
 
         .btn-submit:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
 
         .btn-submit:disabled {
-            /* כפתור מנוטרל בורוד הכהה */
-            background-color: #FFC6C6;
-            color: #644A07;
+            background-color: #E6CFA9;
+            color: #C1856D;
             opacity: 0.7;
             cursor: not-allowed;
         }
@@ -111,40 +102,48 @@
     .message-box {
         margin-top: 20px;
         padding: 15px;
-        border-radius: 5px;
+        border-radius: 6px;
         text-align: center;
         font-weight: bold;
     }
 
-    /*
-           
-        */
-
     .msg-success {
-        /* רקע בהיר, מסגרת וטקסט כהים */
-        background-color: #FFDBDB;
-        color: #644A07;
-        border: 2px solid #644A07;
+        background-color: #E6CFA9;
+        color: #9A3F3F;
+        border: 2px solid #9A3F3F;
     }
 
     .msg-error {
-        /* רקע מעט יותר כהה (הורוד השני), מסגרת וטקסט בחום העמוק ביותר */
-        background-color: #FFC6C6;
-        color: #594100;
-        border: 2px solid #594100;
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+        border: 2px solid #C1856D;
     }
+
+    .forgot-link {
+        display: block;
+        margin-top: 15px;
+        color: #C1856D;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+        .forgot-link:hover {
+            color: #9A3F3F;
+            text-decoration: underline;
+        }
 </style>
 
 <div class="login-container">
     <h2 class="login-header">כניסה למערכת</h2>
 
     <div class="form-group">
-        <label>אימייל:</label>
+        <label>אימייל</label>
         <input type="email" class="form-control" @bind="email" placeholder="הכנס כתובת אימייל..." />
     </div>
 
     <div class="form-group">
-        <label>סיסמה:</label>
+        <label>סיסמה</label>
         <input type="password" class="form-control" @bind="password" placeholder="הכנס סיסמה..." />
     </div>
 
@@ -165,21 +164,18 @@
             @message
         </div>
     }
+
+    <div style="text-align: center;">
+        <a href="/Forgotpass" class="forgot-link">שכחתי סיסמה...</a>
+    </div>
 </div>
-<center> 
-    <a href="/Forgotpass"> forgot password... </a>
-</center>
 
 @code {
-    
-
-    // הקוד נשאר זהה לחלוטין לגרסה הקודמת
     private string email;
     private string password;
     private string message = "";
     private string messageClass = "";
     private bool isBusy = false;
-
 
     private async Task LoginUser()
     {
@@ -197,13 +193,11 @@
         try
         {
             PlayerDB db = new PlayerDB();
-            Player result = await db.LoginAsync(email, password); //המשתמש
+            Player result = await db.LoginAsync(email, password);
 
             if (result != null)
             {
-
-                await MySession.SetAsync("Player", result); //שומר נתונים של משתמש לדפים הבאים 
-                // NavigationManager.NavigateTo("/"); דוגמה להפניה
+                await MySession.SetAsync("Player", result);
                 NavigationManager.NavigateTo("/Approved");
             }
             else

@@ -1,81 +1,125 @@
 ﻿@page "/UpdateDetails"
-@using DBL
-@using Model
-@using System.Threading.Tasks
 @inject NavigationManager NavigationManager
+@using Model
+@using DBL
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage MySession
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime js
 
 <style>
-    /* פלטת צבעים זהה */
+    /* Cohesive Palette:
+           #9A3F3F - Primary (Deep Red)
+           #C1856D - Secondary (Muted Rose)
+           #E6CFA9 - Accent (Sandy Cream)
+           #FBF9D1 - Background (Pale Yellow)
+        */
+
     .update-container {
-        max-width: 400px;
+        max-width: 450px;
         margin: 50px auto;
-        padding: 30px;
-        background-color: #FFDBDB;
-        border-radius: 10px;
-        border: 2px solid #FFC6C6;
-        box-shadow: 0 4px 15px rgba(100, 74, 7, 0.2);
+        padding: 35px;
+        background-color: #FBF9D1; /* Light cream background */
+        border-radius: 15px;
+        border: 2px solid #E6CFA9; /* Sandy border */
+        box-shadow: 0 10px 25px rgba(154, 63, 63, 0.12); /* Warm shadow */
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         direction: rtl;
         text-align: right;
-        color: #644A07;
+        color: #9A3F3F; /* Deep red for text */
     }
 
     .update-header {
         text-align: center;
         margin-bottom: 25px;
-        color: #644A07;
+        color: #9A3F3F;
         font-weight: 800;
+        font-size: 1.6rem;
     }
 
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        color: #644A07;
-        font-weight: bold;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #C1856D; /* Muted rose for labels */
+            font-weight: bold;
+        }
 
     .form-control {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         background-color: #ffffff;
-        border: 2px solid #FFC6C6;
-        border-radius: 5px;
+        border: 2px solid #E6CFA9;
+        border-radius: 8px;
         box-sizing: border-box;
-        color: #644A07;
+        color: #9A3F3F;
+        transition: all 0.3s ease;
     }
+
+        .form-control:focus {
+            border-color: #9A3F3F;
+            box-shadow: 0 0 8px rgba(154, 63, 63, 0.2);
+            outline: none;
+        }
 
     .btn-submit {
         width: 100%;
-        padding: 12px;
-        background-color: #644A07;
-        color: #FFDBDB;
+        padding: 14px;
+        background-color: #9A3F3F; /* Deep Red */
+        color: #FBF9D1; /* Pale text */
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
+        font-size: 1.1rem;
         font-weight: bold;
         cursor: pointer;
+        transition: all 0.3s ease;
         margin-top: 15px;
     }
 
-    .btn-submit:disabled {
-        opacity: 0.6;
-    }
+        .btn-submit:hover:not(:disabled) {
+            background-color: #C1856D;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.97);
+        }
+
+        .btn-submit:disabled {
+            background-color: #E6CFA9;
+            color: #C1856D;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
     .message-box {
-        margin-top: 20px;
-        padding: 10px;
-        border-radius: 5px;
+        margin-top: 25px;
+        padding: 12px;
+        border-radius: 8px;
         text-align: center;
         font-weight: bold;
     }
 
-    .msg-success { background-color: #FFDBDB; color: #644A07; border: 2px solid #644A07; }
-    .msg-error { background-color: #FFC6C6; color: #594100; border: 2px solid #594100; }
+    .msg-success {
+        background-color: #E6CFA9;
+        color: #9A3F3F;
+        border: 1px solid #9A3F3F;
+    }
+
+    .msg-error {
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+        border: 1px solid #C1856D;
+    }
+
+    .loading-text {
+        text-align: center;
+        color: #C1856D;
+        font-style: italic;
+    }
 </style>
 
 <div class="update-container">
@@ -83,27 +127,34 @@
 
     @if (currentUser == null && !isLoaded)
     {
-        <p>טוען נתונים...</p>
+        <p class="loading-text">טוען נתונים...</p>
     }
     else
     {
         <div class="form-group">
-            <label>שם משתמש:</label>
+            <label>שם משתמש</label>
             <input type="text" class="form-control" @bind="username" />
         </div>
 
         <div class="form-group">
-            <label>אימייל:</label>
+            <label>אימייל</label>
             <input type="email" class="form-control" @bind="email" />
         </div>
 
         <div class="form-group">
-            <label>סיסמה:</label>
+            <label>סיסמה חדשה</label>
             <input type="password" class="form-control" @bind="password" />
         </div>
 
         <button class="btn-submit" @onclick="UpdateUserDetails" disabled="@isBusy">
-            @(isBusy ? "מעדכן..." : "שמור שינויים")
+            @if (isBusy)
+            {
+                <span>מעדכן...</span>
+            }
+            else
+            {
+                <span>שמור שינויים</span>
+            }
         </button>
     }
 
@@ -120,30 +171,48 @@
     private string username;
     private string email;
     private string password;
+    public Player p { get; set; } = null;
 
     private string message = "";
     private string messageClass = "";
     private bool isBusy = false;
     private bool isLoaded = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var player = await MySession.GetAsync<Player>("Player");
+            if (player.Success && player.Value != null)
+            {
+                p = player.Value;
+                StateHasChanged();
+            }
+            else
+            {
+                navigationManager.NavigateTo("/Login");
+            }
+
+            await LoadUserData();
+        }
+    }
+
+    private async Task LoadUserData()
     {
         try
         {
-            // שליפת האובייקט מה-Session
             var result = await MySession.GetAsync<Player>("Player");
             if (result.Success && result.Value != null)
             {
                 currentUser = result.Value;
-                
-                // השמת הערכים במשתני העזר שקשורים ל-Input
                 username = currentUser.UserName;
                 email = currentUser.Email;
-                password = currentUser.Password; 
+                password = currentUser.Password;
+                isLoaded = true;
+                StateHasChanged();
             }
             else
             {
-                // אם אין משתמש ב-Session, נשלח אותו להתחבר
                 NavigationManager.NavigateTo("/Login");
             }
         }
@@ -151,10 +220,6 @@
         {
             message = "שגיאה בטעינת נתוני משתמש";
             messageClass = "msg-error";
-        }
-        finally
-        {
-            isLoaded = true;
         }
     }
 
@@ -174,23 +239,17 @@
         {
             PlayerDB db = new PlayerDB();
 
-            // עדכון האובייקט המקומי
             currentUser.UserName = username;
             currentUser.Email = email;
             currentUser.Password = password;
 
-            // 1. עדכון פרטים ב-DB
             int rowsAffected = await db.UpdateAsync(currentUser);
-
-            // 2. עדכון סיסמה ב-DB (אם השתנתה)
             await db.UpdatePassAsync(currentUser);
 
             if (rowsAffected > 0)
             {
-                // 3. עדכון ה-Session עם הנתונים החדשים!
                 await MySession.SetAsync("Player", currentUser);
-
-                message = "הפרטים עודכנו בהצלחה בבסיס הנתונים ובמערכת!";
+                message = "הפרטים עודכנו בהצלחה!";
                 messageClass = "msg-success";
             }
             else
