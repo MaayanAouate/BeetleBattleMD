@@ -31,5 +31,19 @@ namespace DBL
             return "CharacterID";
         }
 
+        protected override string GetTableName()
+        {
+            return "character";
+        }
+        public async Task<List<Character>> GetAllAsync()
+        {
+            return ((List<Character>)await SelectAllAsync());
+        }
+
+
+
+
+
+
     }
 }
