@@ -17,10 +17,10 @@ namespace DBL
             Character beetle = new Character();
             beetle.CharacterID = int.Parse(row[0].ToString());
             beetle.CharacterName = row[1].ToString();
-            beetle.Attack = int.Parse(row[3].ToString());
-            beetle.HealthPoints = int.Parse(row[4].ToString());
-            beetle.Defence = int.Parse(row[5].ToString());
-            beetle.CritRate = double.Parse(row[6].ToString());
+            beetle.Attack = int.Parse(row[2].ToString());
+            beetle.HealthPoints = int.Parse(row[3].ToString());
+            beetle.Defence = int.Parse(row[4].ToString());
+            beetle.CritRate = double.Parse(row[5].ToString());
 
             return beetle;
         }
