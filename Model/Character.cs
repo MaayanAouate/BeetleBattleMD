@@ -16,11 +16,12 @@ namespace Model
         public int HealthPoints { get; set; }
         public int Defence { get; set; }
         public double CritRate { get; set; }
+        public string Rarity { get; set; }
 
         public Character()
         {
         }
-        public Character(int characterID, string characterName, int attack, int healthPoints, int defence, double critRate)
+        public Character(int characterID, string characterName, int attack, int healthPoints, int defence, double critRate, string rarity)
         {
             CharacterID = characterID;
             CharacterName = characterName;
@@ -28,6 +29,7 @@ namespace Model
             HealthPoints = healthPoints;
             Defence = defence;
             CritRate = critRate;
+            Rarity = rarity;
         }
 
     }

@@ -21,6 +21,7 @@ namespace DBL
             beetle.HealthPoints = int.Parse(row[3].ToString());
             beetle.Defence = int.Parse(row[4].ToString());
             beetle.CritRate = double.Parse(row[5].ToString());
+            beetle.Rarity = row[6].ToString();
 
             return beetle;
         }
