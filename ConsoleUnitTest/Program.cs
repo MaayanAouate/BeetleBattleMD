@@ -43,7 +43,7 @@ namespace ConsoleUnitTest
 
             //Console.WriteLine("bonjour");
 
-            
+
             ///await db.updateImageAsync(list[0].PlayerID, DBNull.Value); /////לא עובדב הצילו
 
             // delete testing
@@ -51,8 +51,10 @@ namespace ConsoleUnitTest
             //Console.WriteLine("bonjour");
 
 
-
-
+            List<CharacterData> ch;
+            CharacterDataDB chdb = new CharacterDataDB();
+            ch = await chdb.SelectCharacterData(1);
+            Console.WriteLine(  );
 
         }
     }
