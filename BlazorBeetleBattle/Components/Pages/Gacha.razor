@@ -1,0 +1,56 @@
+﻿@page "/Gacha"
+@inject NavigationManager NavigationManager
+@using Model
+@using DBL
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime js
+
+
+<button class="btn-submit" @onclick="CharacterGacha" disabled="@isBusy">
+    @if (isBusy)
+    {
+        <span>...</span>
+    }
+    else
+    {
+        <span>Character</span>
+    }
+</button>
+
+@* next *@
+
+
+
+<button class="btn-submit" @onclick="ArtifactGacha" disabled="@isBusy">
+    @if (isBusy)
+    {
+        <span>...</span>
+    }
+    else
+    {
+        <span>Artifact</span>
+    }
+</button>
+
+
+@code {
+
+    private bool isBusy = false;
+
+    private async Task CharacterGacha()
+    {
+        isBusy = true;
+        NavigationManager.NavigateTo("/Chargacha");
+        isBusy = false;
+    }
+
+    private async Task ArtifactGacha()
+    {
+        isBusy = true;
+        NavigationManager.NavigateTo("/Artgacha");
+        isBusy = false;
+    }
+
+}

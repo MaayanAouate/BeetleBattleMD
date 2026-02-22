@@ -8,6 +8,16 @@
 @inject IJSRuntime js
 
 <style>
+    /* Plan (pseudocode as comment):
+       1. Add spacing/layout for the action area so multiple buttons can appear side-by-side.
+       2. Add a new button labeled "Gacha" next to the existing profile button.
+       3. The "Gacha" button should:
+          - Be disabled when `isBusy` is true.
+          - Show the same loading text ("טוען...") when busy.
+          - On click set `isBusy = true` and navigate to "/Gacha" using `NavigationManager.NavigateTo`.
+       4. Add a private `ToGacha` method mirroring `ToProfile` behavior.
+    */
+
     /* Cohesive Palette:
            #9A3F3F - Primary (Deep Red)
            #C1856D - Secondary (Muted Rose)
@@ -81,6 +91,13 @@
         font-size: 1.2rem;
         margin-bottom: 25px;
     }
+
+    .action-area {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 8px;
+    }
 </style>
 
 <div class="approved-wrapper">
@@ -103,6 +120,17 @@
                 else
                 {
                     <span>מעבר לפרופיל האישי</span>
+                }
+            </button>
+
+            <button class="btn-profile" @onclick="ToGacha" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span>טוען...</span>
+                }
+                else
+                {
+                    <span>Gacha</span>
                 }
             </button>
         </div>
@@ -135,5 +163,11 @@
     {
         isBusy = true;
         NavigationManager.NavigateTo("/UpdateDetails");
+    }
+
+    private void ToGacha()
+    {
+        isBusy = true;
+        NavigationManager.NavigateTo("/Gacha");
     }
 }
