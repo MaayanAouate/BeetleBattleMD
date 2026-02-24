@@ -4,53 +4,116 @@
 @using DBL
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage MySession
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject NavigationManager navigationManager
 @inject IJSRuntime js
 
-
-<button class="btn-submit" @onclick="CharacterGacha" disabled="@isBusy">
-    @if (isBusy)
-    {
-        <span>...</span>
+<style>
+    .gacha-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    else
-    {
-        <span>Character</span>
+
+    .gacha-container {
+        max-width: 650px;
+        width: 100%;
+        background-color: #FBF9D1;
+        border-radius: 20px;
+        border: 3px solid #E6CFA9;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(154, 63, 63, 0.15);
     }
-</button>
 
-@* next *@
-
-
-
-<button class="btn-submit" @onclick="ArtifactGacha" disabled="@isBusy">
-    @if (isBusy)
-    {
-        <span>...</span>
+    .gacha-header {
+        color: #9A3F3F;
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 30px;
+        text-transform: uppercase;
     }
-    else
-    {
-        <span>Artifact</span>
-    }
-</button>
 
+    .action-area {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn-gacha {
+        display: inline-block;
+        padding: 15px 40px;
+        background-color: #9A3F3F;
+        color: #FBF9D1;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(154, 63, 63, 0.3);
+    }
+
+        .btn-gacha:hover {
+            background-color: #C1856D;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(154, 63, 63, 0.4);
+        }
+
+        .btn-gacha:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+</style>
+
+<div class="gacha-wrapper">
+    <div class="gacha-container">
+        <h1 class="gacha-header">Gacha Portal</h1>
+
+        <div class="action-area">
+            <button class="btn-gacha" @onclick="CharacterGacha" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span>טוען...</span>
+                }
+                else
+                {
+
+                    <span>Character Gacha</span>
+                }
+            </button>
+
+            <button class="btn-gacha" @onclick="ArtifactGacha" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span>טוען...</span>
+                }
+                else
+                {
+
+                    <span>Artifact Gacha</span>
+                }
+            </button>
+        </div>
+    </div>
+</div>
 
 @code {
-
     private bool isBusy = false;
 
-    private async Task CharacterGacha()
+    private void CharacterGacha()
     {
         isBusy = true;
         NavigationManager.NavigateTo("/Chargacha");
-        isBusy = false;
     }
 
-    private async Task ArtifactGacha()
+    private void ArtifactGacha()
     {
         isBusy = true;
         NavigationManager.NavigateTo("/Artgacha");
-        isBusy = false;
     }
-
 }
