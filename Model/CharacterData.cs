@@ -8,6 +8,7 @@ namespace Model
 {
     public class CharacterData
     {
+        //gadi
         public int CharacterID { get; set; }
         public string CharacterName { get; set; }
         public int Attack { get; set; }
