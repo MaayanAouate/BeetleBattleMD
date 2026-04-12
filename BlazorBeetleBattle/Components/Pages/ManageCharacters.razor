@@ -1,0 +1,226 @@
+﻿@page "/ManageCharacters"
+@using Model
+@using DBL
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage MySession
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js
+
+<style>
+    /* שימוש בפלטה הקיימת שלך */
+    .manager-wrapper {
+        padding: 40px 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FBF9D1;
+        min-height: 100vh;
+        direction: rtl;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        border: 3px solid #E6CFA9;
+        box-shadow: 0 10px 25px rgba(154, 63, 63, 0.1);
+    }
+
+    h2 { color: #9A3F3F; text-align: center; font-weight: 900; }
+
+    /* עיצוב הטבלה */
+    .table-styled {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .table-styled th {
+        background-color: #9A3F3F;
+        color: white;
+        padding: 12px;
+    }
+
+    .table-styled td {
+        padding: 12px;
+        border-bottom: 1px solid #E6CFA9;
+        text-align: center;
+    }
+
+    /* עיצוב הטופס */
+    .form-section {
+        background-color: #FBF9D1;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border: 1px solid #C1856D;
+    }
+
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; color: #9A3F3F; font-weight: bold; }
+    .input-group input { 
+        width: 100%; 
+        padding: 8px; 
+        border-radius: 8px; 
+        border: 1px solid #C1856D; 
+    }
+
+    .btn-action {
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-add { background-color: #9A3F3F; color: white; }
+    .btn-delete { background-color: #C1856D; color: white; margin-right: 5px; }
+    .btn-update { background-color: #E6CFA9; color: #9A3F3F; }
+
+    .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
+</style>
+
+<div class="manager-wrapper">
+    <div class="container">
+        <h2>ניהול דמויות שחקן</h2>
+
+        @if (currentPlayer == null)
+        {
+            <p>טוען נתונים...</p>
+        }
+        else
+        {
+            <div class="form-section">
+                <h4> (isEditMode ? "עדכון דמות" : "הוספת דמות חדשה")</h4>
+                <div class="action-area" style="display: flex; gap: 10px; align-items: flex-end;">
+                    <div class="input-group">
+                        <label>מזהה דמות (Character ID)</label>
+                        <input type="number" @bind="formModel.CharacterID" disabled="@isEditMode" />
+                    </div>
+                    <div class="input-group">
+                        <label>כמות/ספירה (Counter)</label>
+                        <input type="number" @bind="formModel.Counter" />
+                    </div>
+                    <button class="btn-action btn-add" @onclick="HandleSubmit">
+                        @(isEditMode ? "שמור שינויים" : "הוסף לרשימה")
+                    </button>
+                    @if (isEditMode)
+                    {
+                        <button class="btn-action" @onclick="CancelEdit">ביטול</button>
+                    }
+                </div>
+            </div>
+
+            <table class="table-styled">
+                <thead>
+                    <tr>
+                        <th>מזהה דמות</th>
+                        <th>רמה (Level)</th>
+                        <th>ספירה</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in playerCharsList)
+                    {
+                        <tr>
+                            <td>@item.CharacterID</td>
+                            <td>@item.GetLevel()</td>
+                            <td>@item.Counter</td>
+                            <td>
+                                <button class="btn-action btn-update" @onclick="() => EditItem(item)">ערוך</button>
+                                <button class="btn-action btn-delete" @onclick="() => DeleteItem(item)">מחק</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    private Player currentPlayer;
+    private List<PlayerCharacters> playerCharsList = new();
+    private PlayerCharacters formModel = new();
+    private PlayerCharactersDB db = new();
+    private bool isEditMode = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await MySession.GetAsync<Player>("Player");
+            if (result.Success && result.Value != null)
+            {
+                currentPlayer = result.Value;
+                formModel.PlayerID = currentPlayer.PlayerID;
+                await RefreshList();
+                StateHasChanged();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/Login");
+            }
+        }
+    }
+
+    private async Task RefreshList()
+    {
+        playerCharsList = await db.GetByPlayerIdAsync(currentPlayer.PlayerID);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (isEditMode)
+        {
+            await db.UpdateCounterAsync(formModel);
+            await js.InvokeVoidAsync("alert", "עודכן בהצלחה!");
+        }
+        else
+        {
+            // בדיקה אם כבר קיים
+            var existing = await db.GetSpecificCharacterAsync(currentPlayer.PlayerID, formModel.CharacterID);
+            if (existing != null)
+            {
+                await js.InvokeVoidAsync("alert", "הדמות כבר קיימת לשחקן זה, ניתן רק לעדכן אותה.");
+            }
+            else
+            {
+                await db.InsertAsync(formModel);
+                await js.InvokeVoidAsync("alert", "נוסף בהצלחה!");
+            }
+        }
+
+        CancelEdit();
+        await RefreshList();
+    }
+
+    private void EditItem(PlayerCharacters item)
+    {
+        formModel = new PlayerCharacters 
+        { 
+            PlayerID = item.PlayerID, 
+            CharacterID = item.CharacterID, 
+            Counter = item.Counter 
+        };
+        isEditMode = true;
+    }
+
+    private void CancelEdit()
+    {
+        formModel = new PlayerCharacters { PlayerID = currentPlayer.PlayerID };
+        isEditMode = false;
+    }
+
+    private async Task DeleteItem(PlayerCharacters item)
+    {
+        bool confirmed = await js.InvokeAsync<bool>("confirm", "האם אתה בטוח שברצונך למחוק?");
+        if (confirmed)
+        {
+            await db.DeleteAsync(item);
+            await RefreshList();
+        }
+    }
+}
