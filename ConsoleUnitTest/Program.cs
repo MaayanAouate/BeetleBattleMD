@@ -9,8 +9,8 @@ namespace ConsoleUnitTest
         {
             Console.WriteLine("khdodiku ");
 
-            PlayerDB db = new PlayerDB();
-            List<Player> list = await db.GetAllAsync();
+            //PlayerDB db = new PlayerDB();
+            //List<Player> list = await db.GetAllAsync();
 
             //TEST Get All Players
             ///
@@ -51,11 +51,15 @@ namespace ConsoleUnitTest
             //Console.WriteLine("bonjour");
 
 
-            List<CharacterData> ch;
-            CharacterDataDB chdb = new CharacterDataDB();
-            ch = await chdb.SelectCharacterData(1);
-            Console.WriteLine(  );
+            //List<CharacterData> ch;
+            //CharacterDataDB chdb = new CharacterDataDB();
+            //ch = await chdb.SelectCharacterData(1);
+            //Console.WriteLine(  );
 
+            CharacterDB db = new CharacterDB();
+            List<Character> lst = await db.GetAllByPlayerID(7);
+            Console.WriteLine();
+            //oyyolyyooly
         }
     }
 }

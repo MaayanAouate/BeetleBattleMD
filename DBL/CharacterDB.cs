@@ -2,6 +2,7 @@
 using Mysqlx.Crud;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -39,6 +40,19 @@ namespace DBL
         public async Task<List<Character>> GetAllAsync()
         {
             return ((List<Character>)await SelectAllAsync());
+        }
+
+        public async Task<List<Character>> GetAllByPlayerID(int playerid)
+        {
+            string s = @"Select `character`.*
+                         From player_characters
+                         Inner Join `character` On player_characters.CharacterID = `character`.CharacterID 
+                         Inner Join player On player_characters.PlayerID = player.PlayerID";
+                         //Where player.PlayerID = @id";
+            Dictionary<string, object> p = new Dictionary<string, object>();
+            p.Add("player.PlayerID", playerid);
+            List<Character> lst = await SelectAllAsync(s, p);
+            return lst;
         }
 
 

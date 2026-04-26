@@ -6,42 +6,74 @@
 @inject NavigationManager NavigationManager
 
 <style>
-    /* ... (אותו עיצוב כמו מקודם) ... */
-    .manager-wrapper { padding: 40px 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #FBF9D1; min-height: 100vh; direction: rtl; }
-    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; border: 3px solid #E6CFA9; box-shadow: 0 10px 25px rgba(154, 63, 63, 0.1); }
-    h2 { color: #9A3F3F; text-align: center; font-weight: 900; margin-bottom: 30px; }
-    .table-styled { width: 100%; border-collapse: collapse; }
-    .table-styled th { background-color: #9A3F3F; color: white; padding: 15px; }
-    .table-styled td { padding: 15px; border-bottom: 1px solid #E6CFA9; text-align: center; }
+    .manager-wrapper {
+        padding: 40px 20px;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #FBF9D1;
+        min-height: 100vh;
+        direction: rtl;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        border: 3px solid #E6CFA9;
+    }
+
+    h2 {
+        color: #9A3F3F;
+        text-align: center;
+        font-weight: 900;
+    }
+
+    .table-styled {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .table-styled th {
+            background-color: #9A3F3F;
+            color: white;
+            padding: 12px;
+        }
+
+        .table-styled td {
+            padding: 12px;
+            border-bottom: 1px solid #E6CFA9;
+            text-align: center;
+        }
 </style>
 
 <div class="manager-wrapper">
     <div class="container">
         <h2>הדמויות שלי</h2>
 
-        @if (currentPlayer == null || allCharacters == null)
+        @if (allCharacters == null)
         {
-            <p style="text-align:center;">טוען נתונים...</p>
+            <p style="text-align:center;">טוען נתוני דמויות...</p>
         }
         else if (playerCharsList.Count == 0)
         {
-            <p style="text-align:center;">לא נמצאו דמויות ברשותך.</p>
+            <p style="text-align:center;">אין לך דמויות כרגע.</p>
         }
         else
         {
             <table class="table-styled">
                 <thead>
                     <tr>
-                        <th>שם הדמות</th> @* שינינו ממזהה לשם *@
-                        <th>רמה (Level)</th>
-                        <th>כמות (Counter)</th>
+                        <th>שם הדמות</th>
+                        <th>רמה</th>
+                        <th>כמות</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in playerCharsList)
                     {
                         <tr>
-                            @* כאן אנחנו מחפשים את שם הדמות לפי ה-ID שלה *@
                             <td><strong>@GetCharacterName(item.CharacterID)</strong></td>
                             <td>@item.GetLevel()</td>
                             <td>@item.Counter</td>
@@ -56,12 +88,10 @@
 @code {
     private Player currentPlayer;
     private List<PlayerCharacters> playerCharsList = new();
-    
-    // רשימה שתכיל את כל פרטי הדמויות (כולל השמות)
-    private List<Character> allCharacters; 
-    
-    private PlayerCharactersDB db = new();
-    private CharacterDB charDb = new(); // מחלקה לשליפת נתוני דמויות
+    private List<Character> allCharacters;
+
+    private PlayerCharactersDB playerCharDb = new();
+    private CharacterDB charDb = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -71,11 +101,13 @@
             if (result.Success && result.Value != null)
             {
                 currentPlayer = result.Value;
-                
-                // טעינת כל הדמויות כדי שנוכל לחלץ שמות
-                allCharacters = await charDb.GetAllAsync(); 
-                
+
+                // 1. קודם טוענים את כל השמות מה-DB
+                allCharacters = await charDb.GetAllAsync();
+
+                // 2. אחר כך טוענים את הדמויות של השחקן
                 await RefreshList();
+
                 StateHasChanged();
             }
             else
@@ -87,13 +119,16 @@
 
     private async Task RefreshList()
     {
-        playerCharsList = await db.GetByPlayerIdAsync(currentPlayer.PlayerID);
+        playerCharsList = await playerCharDb.GetByPlayerIdAsync(currentPlayer.PlayerID);
     }
 
-    // פונקציית עזר למציאת שם דמות לפי ה-ID שלה
     private string GetCharacterName(int charId)
     {
-        var character = allCharacters?.FirstOrDefault(c => c.CharacterID == charId);
-        return character != null ? character.CharacterName : "דמות לא ידועה";
+        if (allCharacters == null) return "טוען...";
+
+        var character = allCharacters.FirstOrDefault(c => c.CharacterID == charId);
+
+        // אם מצאנו - מחזירים שם. אם לא - מחזירים את ה-ID כדי שנדע מה חסר ב-DB
+        return character != null ? character.CharacterName : $"דמות לא מוכרת (ID: {charId})";
     }
 }
