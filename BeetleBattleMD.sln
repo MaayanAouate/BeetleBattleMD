@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUnitTest", "ConsoleU
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorBeetleBattle", "BlazorBeetleBattle\BlazorBeetleBattle.csproj", "{6C888756-B8C7-424F-A9E5-AD7C5C18FE3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeetlesAPI", "BeetlesAPI\BeetlesAPI.csproj", "{3E3A3A00-4517-4621-B727-291EECD3E753}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6C888756-B8C7-424F-A9E5-AD7C5C18FE3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C888756-B8C7-424F-A9E5-AD7C5C18FE3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C888756-B8C7-424F-A9E5-AD7C5C18FE3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E3A3A00-4517-4621-B727-291EECD3E753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E3A3A00-4517-4621-B727-291EECD3E753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E3A3A00-4517-4621-B727-291EECD3E753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E3A3A00-4517-4621-B727-291EECD3E753}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
