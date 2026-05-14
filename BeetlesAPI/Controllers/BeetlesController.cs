@@ -37,5 +37,24 @@ namespace BeetlesAPI.Controllers
                 return Ok(p);
             }
         }
+
+
+        // POST api/<ToDoListController>
+        [HttpPost]
+        [ActionName("GettAllByID")]
+        public async Task<ActionResult<List<Character>>> Post1([FromBody] int id)
+        {
+
+            CharacterDB characterDB = new CharacterDB();
+            List<Character> x = await characterDB.GetAllByPlayerID(id);
+            if (x == null)
+            {
+                return BadRequest("User not found");
+            }
+            else
+            {
+                return Ok(x);
+            }
+        }
     }
 }
