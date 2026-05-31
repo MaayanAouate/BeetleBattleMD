@@ -6,6 +6,15 @@
 @inject NavigationManager NavigationManager
 
 
+
+
+
+
+
+
+
+
+
 @* 
 
 @code{
@@ -83,7 +92,7 @@
 }
  *@
 
-@* 
+
 <div class="manager-wrapper">
     <div class="container">
         <h2>הדמויות שלי</h2>
@@ -167,4 +176,4 @@
         // אם מצאנו - מחזירים שם. אם לא - מחזירים את ה-ID כדי שנדע מה חסר ב-DB
         return character != null ? character.CharacterName : $"דמות לא מוכרת (ID: {charId})";
     }
-} *@
+}

@@ -122,6 +122,16 @@
                     <span>מעבר לפרופיל האישי</span>
                 }
             </button>
+            <button class="btn-profile" @onclick="ToChars" disabled="@isBusy">
+                @if (isBusy)
+                {
+                    <span>טוען...</span>
+                }
+                else
+                {
+                    <span>מעבר לדמויות</span>
+                }
+            </button>
 
             <button class="btn-profile" @onclick="ToGacha" disabled="@isBusy">
                 @if (isBusy)
@@ -157,6 +167,12 @@
                 navigationManager.NavigateTo("/Login");
             }
         }
+    }
+
+    private void ToChars()
+    {
+        isBusy = true;
+        NavigationManager.NavigateTo("/ManageCharacters");
     }
 
     private void ToProfile()
