@@ -173,7 +173,6 @@
 
         var character = allCharacters.FirstOrDefault(c => c.CharacterID == charId);
 
-        // אם מצאנו - מחזירים שם. אם לא - מחזירים את ה-ID כדי שנדע מה חסר ב-DB
-        return character != null ? character.CharacterName : $"דמות לא מוכרת (ID: {charId})";
+        return character != null ? character.CharacterName : $"name (ID: {charId})";
     }
 }
